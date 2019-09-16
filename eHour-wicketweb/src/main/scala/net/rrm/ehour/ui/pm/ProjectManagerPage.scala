@@ -106,7 +106,7 @@ class ProjectManagerPage extends AbstractBasePage[String](new ResourceModel("pmR
 
   protected def findContentContainer: WebMarkupContainer = Self.get(ContainerId).asInstanceOf[WebMarkupContainer]
 
-  def projects = projectService.getProjectManagerProjects(EhourWebSession.getUser)
+  def projects = projectService.getResponsibleProjects(EhourWebSession.getUser)
 
   def createSelectorData(projects: util.List[Project]): EntrySelectorData = {
     val headers = Lists.newArrayList(new EntrySelectorData.Header("admin.project.customer"),

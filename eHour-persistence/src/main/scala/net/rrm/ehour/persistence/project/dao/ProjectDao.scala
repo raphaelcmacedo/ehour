@@ -37,6 +37,26 @@ trait ProjectDao extends GenericDao[Integer, Project] {
   def findActiveProjectsWhereUserIsPM(user: User): util.List[Project]
 
   /**
+   * Find projects where user is section leader
+   */
+  def findActiveProjectsWhereUserIsSectionLeader(user: User): util.List[Project]
+
+  /**
+   * Find projects where user is head of unit
+   */
+  def findActiveProjectsWhereUserIsHoU(user: User): util.List[Project]
+
+  /**
+   * Find projects where user is contract manager
+   */
+  def findActiveProjectsWhereUserIsContractManager(user: User): util.List[Project]
+
+  /**
+   * Find projects where user is responsible
+   */
+  def findActiveProjectsWhereUserIsResponsible(user: User): util.List[Project]
+
+  /**
    * Find all projects which have a defined projectmanager
    */
   def findAllProjectsWithPmSet(): util.List[Project]

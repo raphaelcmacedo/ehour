@@ -60,6 +60,9 @@ public class AggregateReportServiceImpl extends AbstractReportServiceImpl<Assign
 
     @Override
     public List<AssignmentAggregateReportElement> getHoursPerAssignment(List<Integer> projectAssignmentIds) {
+        if(projectAssignmentIds.isEmpty()){
+            return new ArrayList<AssignmentAggregateReportElement>();
+        }
         return reportAggregatedDAO.getCumulatedHoursPerAssignmentForAssignments(projectAssignmentIds);
     }
 

@@ -30,6 +30,18 @@ class ProjectDaoHibernateImpl extends AbstractGenericDaoHibernateImpl[Integer, P
   override def findActiveProjectsWhereUserIsPM(user: User): util.List[Project] = findByNamedQuery("Project.findActiveProjectsWhereUserIsPM", "user", user, CacheRegion)
 
   @Transactional(readOnly = true)
+  override def findActiveProjectsWhereUserIsSectionLeader(user: User): util.List[Project] = findByNamedQuery("Project.findActiveProjectsWhereUserIsSectionLeader", "user", user, CacheRegion)
+
+  @Transactional(readOnly = true)
+  override def findActiveProjectsWhereUserIsHoU(user: User): util.List[Project] = findByNamedQuery("Project.findActiveProjectsWhereUserIsHoU", "user", user, CacheRegion)
+
+  @Transactional(readOnly = true)
+  override def findActiveProjectsWhereUserIsContractManager(user: User): util.List[Project] = findByNamedQuery("Project.findActiveProjectsWhereUserIsContractManager", "user", user, CacheRegion)
+
+  @Transactional(readOnly = true)
+  override def findActiveProjectsWhereUserIsResponsible(user: User): util.List[Project] = findByNamedQuery("Project.findActiveProjectsWhereUserIsResponsible", "user", user, CacheRegion)
+
+  @Transactional(readOnly = true)
   override def findAllProjectsWithPmSet(): util.List[Project] = {
     val criteria = getSession.createCriteria(classOf[Project])
     criteria.add(Restrictions.isNotNull("projectManager"))

@@ -174,4 +174,26 @@ public class ProjectServiceImpl implements ProjectService {
     public List<Project> getProjectManagerProjects(User user) {
         return projectDAO.findActiveProjectsWhereUserIsPM(user);
     }
+
+    @Override
+    public List<Project> getSectionLeaderProjects(User user) {
+        return projectDAO.findActiveProjectsWhereUserIsSectionLeader(user);
+    }
+
+    @Override
+    public List<Project> getHeadOfUnitProjects(User user) {
+        return projectDAO.findActiveProjectsWhereUserIsHoU(user);
+    }
+
+    @Override
+    public List<Project> getContractManagerProjects(User user) {
+        return projectDAO.findActiveProjectsWhereUserIsContractManager(user);
+    }
+
+    @Override
+    public List<Project> getResponsibleProjects(User user) {
+        return projectDAO.findActiveProjectsWhereUserIsResponsible(user);
+    }
+
+
 }

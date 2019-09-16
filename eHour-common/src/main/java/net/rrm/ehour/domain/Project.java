@@ -76,6 +76,19 @@ public class Project extends DomainObject<Integer, Project> {
     @JoinColumn(name = "PROJECT_MANAGER", nullable = true)
     private User projectManager;
 
+    @ManyToOne
+    @JoinColumn(name = "SECTION_LEADER", nullable = true)
+    private User sectionLeader;
+
+    @ManyToOne
+    @JoinColumn(name = "HEAD_OF_UNIT", nullable = true)
+    private User headOfUnit;
+
+    @ManyToOne
+    @JoinColumn(name = "CONTRACT_MANAGER", nullable = true)
+    private User contractManager;
+
+
     @Column(name = "BILLABLE")
     @Type(type = "yes_no")
     private Boolean billable = Boolean.TRUE;
@@ -234,6 +247,30 @@ public class Project extends DomainObject<Integer, Project> {
      */
     public void setProjectManager(User projectManager) {
         this.projectManager = projectManager;
+    }
+
+    public User getHeadOfUnit() {
+        return headOfUnit;
+    }
+
+    public void setHeadOfUnit(User headOfUnit) {
+        this.headOfUnit = headOfUnit;
+    }
+
+    public User getContractManager() {
+        return contractManager;
+    }
+
+    public void setContractManager(User contractManager) {
+        this.contractManager = contractManager;
+    }
+
+    public Boolean getBillable() {
+        return billable;
+    }
+
+    public void setBillable(Boolean billable) {
+        this.billable = billable;
     }
 
     /**

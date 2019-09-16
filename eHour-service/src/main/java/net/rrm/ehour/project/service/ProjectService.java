@@ -85,4 +85,36 @@ public interface ProjectService
      * @return
 	 */
 	List<Project> getProjectManagerProjects(User user);
+
+	/**
+	 * Get project's where user is section leader
+	 *
+	 * @param user
+	 * @return
+	 */
+	List<Project> getSectionLeaderProjects(User user);
+
+	/**
+	 * Get project's where user is head of unit
+	 *
+	 * @param user
+	 * @return
+	 */
+	List<Project> getHeadOfUnitProjects(User user);
+
+	/**
+	 * Get project's where user is contract manager
+	 *
+	 * @param user
+	 * @return
+	 */
+	List<Project> getContractManagerProjects(User user);
+
+	/**
+	 * Get project's where user has any responsibility
+	 *
+	 * @param user
+	 * @return
+	 */
+	List<Project> getResponsibleProjects(User user);
 }

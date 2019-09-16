@@ -118,6 +118,9 @@ public class ProjectFormPanel<T extends ProjectAdminBackingBean> extends Abstrac
         addGeneralInfo(form);
         addMisc(form);
         form.add(getProjectManager());
+        form.add(getSectionLeader());
+        form.add(getHeadOfUnit());
+        form.add(getContractManager());
 
         addBillable(form);
         form.add(addDeleteInfo("deletableMsg", form.getModel()));
@@ -187,6 +190,33 @@ public class ProjectFormPanel<T extends ProjectAdminBackingBean> extends Abstrac
         projectManager.setLabel(new ResourceModel("admin.project.projectManager"));
 
         return projectManager;
+    }
+
+    private DropDownChoice<User> getSectionLeader() {
+        // section leader
+        DropDownChoice<User> sectionLeader = new DropDownChoice<>("project.sectionLeader", getEligablePms(), new ChoiceRenderer<User>("fullName"));
+        sectionLeader.setNullValid(true);
+        sectionLeader.setLabel(new ResourceModel("admin.project.sectionLeader"));
+
+        return sectionLeader;
+    }
+
+    private DropDownChoice<User> getHeadOfUnit() {
+        // head of unit
+        DropDownChoice<User> headOfUnit = new DropDownChoice<>("project.headOfUnit", getEligablePms(), new ChoiceRenderer<User>("fullName"));
+        headOfUnit.setNullValid(true);
+        headOfUnit.setLabel(new ResourceModel("admin.project.headOfUnit"));
+
+        return headOfUnit;
+    }
+
+    private DropDownChoice<User> getContractManager() {
+        // contract manager
+        DropDownChoice<User> contractManager = new DropDownChoice<>("project.contractManager", getEligablePms(), new ChoiceRenderer<User>("fullName"));
+        contractManager.setNullValid(true);
+        contractManager.setLabel(new ResourceModel("admin.project.contractManager"));
+
+        return contractManager;
     }
 
     private void addDescriptionAndContact(WebMarkupContainer parent) {

@@ -37,7 +37,7 @@ class ProjectManagerPageSpec extends AbstractSpringWebAppSpec {
     "load first entry" in {
       val project = ProjectObjectMother.createProject(1)
       when(aggregateReportService.getProjectManagerDetailedReport(project)).thenReturn(new ProjectManagerReport)
-      when(projectService.getProjectManagerProjects(any(classOf[User]))).thenReturn(WrapAsJava.bufferAsJavaList(ListBuffer(project)))
+      when(projectService.getResponsibleProjects(any(classOf[User]))).thenReturn(WrapAsJava.bufferAsJavaList(ListBuffer(project)))
       when(projectService.getProject(1)).thenReturn(project)
 
       tester.startPage(classOf[ProjectManagerPage])
