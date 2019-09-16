@@ -131,6 +131,9 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public void validatePMRoles(Project project) {
         userService.validateProjectManagementRoles(project.getProjectManager() == null ? null : project.getProjectManager().getUserId());
+        userService.validateProjectManagementRoles(project.getSectionLeader() == null ? null : project.getSectionLeader().getUserId());
+        userService.validateProjectManagementRoles(project.getHeadOfUnit() == null ? null : project.getHeadOfUnit().getUserId());
+        userService.validateProjectManagementRoles(project.getContractManager() == null ? null : project.getContractManager().getUserId());
     }
 
     @Transactional

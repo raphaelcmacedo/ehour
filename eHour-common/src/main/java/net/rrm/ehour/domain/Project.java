@@ -249,6 +249,14 @@ public class Project extends DomainObject<Integer, Project> {
         this.projectManager = projectManager;
     }
 
+    public User getSectionLeader() {
+        return sectionLeader;
+    }
+
+    public void setSectionLeader(User sectionLeader) {
+        this.sectionLeader = sectionLeader;
+    }
+
     public User getHeadOfUnit() {
         return headOfUnit;
     }
