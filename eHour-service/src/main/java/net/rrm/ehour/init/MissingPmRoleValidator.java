@@ -40,12 +40,20 @@ public class MissingPmRoleValidator {
         List<Project> projectsWithPmSet = projectDao.findAllProjectsWithPmSet();
 
         for (Project project : projectsWithPmSet) {
-            User pm = project.getProjectManager();
+            this.applyPMRole(project.getProjectManager(), project);
+            this.applyPMRole(project.getSectionLeader(), project);
+            this.applyPMRole(project.getHeadOfUnit(), project);
+            this.applyPMRole(project.getContractManager(), project);
+        }
+    }
 
-            boolean hasPmRole = pm.getUserRoles().contains(UserRole.PROJECTMANAGER);
+    @Transactional
+    private void applyPMRole(User user, Project project){
+        if (user != null) {
+            boolean hasPmRole = user.getUserRoles().contains(UserRole.PROJECTMANAGER);
 
             if (!hasPmRole) {
-                LOGGER.warn(String.format("%s (%s) does not have PM role but is PM for %s. Adding PM role.", pm.getFullName(), pm.getPK(), project.getFullName()));
+                LOGGER.warn(String.format("%s (%s) does not have PM role but is PM for %s. Adding PM role.", user.getFullName(), user.getPK(), project.getFullName()));
                 projectService.validatePMRoles(project);
             }
         }

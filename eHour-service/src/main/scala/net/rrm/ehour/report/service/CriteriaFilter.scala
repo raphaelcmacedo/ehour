@@ -71,7 +71,7 @@ private object ProjectPredicate {
 
   val billablePredicate: ProjectPredicate = (p: Project) => p.isBillable
 
-  def pmPredicate(pm: User): ProjectPredicate = (p: Project) => pm.equals(p.getProjectManager)
+  def pmPredicate(pm: User): ProjectPredicate = (p: Project) => pm.equals(p.getProjectManager) || pm.equals(p.getSectionLeader) || pm.equals(p.getHeadOfUnit) || pm.equals(p.getContractManager)
 
   def filter(customers: List[Customer], predicate: ProjectPredicate): List[Customer] = {
     val projects = customers.flatMap(c => WrapAsScala.asScalaSet(c.getProjects))

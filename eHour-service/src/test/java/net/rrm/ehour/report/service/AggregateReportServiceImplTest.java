@@ -193,7 +193,7 @@ public class AggregateReportServiceImplTest {
         userSelectedCriteria.setReportTypeToPM(projectManager);
 
         Project pmProject = ProjectObjectMother.createProject(1);
-        when(projectDao.findActiveProjectsWhereUserIsPM(projectManager)).thenReturn(Lists.newArrayList(pmProject));
+        when(projectDao.findActiveProjectsWhereUserIsResponsible(projectManager)).thenReturn(Lists.newArrayList(pmProject));
 
         ProjectAssignment assignment = ProjectAssignmentObjectMother.createProjectAssignment(1);
         assignment.getProject().setProjectId(1);

@@ -89,7 +89,7 @@ public abstract class AbstractReportServiceImpl<RE extends ProjectStructuredRepo
     }
 
     private List<Integer> fetchAllowedProjectIds(UserSelectedCriteria userSelectedCriteria) {
-        List<Project> allowedProjects = projectDao.findActiveProjectsWhereUserIsPM(userSelectedCriteria.getPm());
+        List<Project> allowedProjects = projectDao.findActiveProjectsWhereUserIsResponsible(userSelectedCriteria.getPm());
 
         List<Integer> projectIds = Lists.newArrayList();
 
