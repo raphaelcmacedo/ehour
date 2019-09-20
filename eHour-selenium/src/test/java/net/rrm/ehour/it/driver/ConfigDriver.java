@@ -13,7 +13,7 @@ public abstract class ConfigDriver {
     }
 
     public static void assertConfigLoaded() {
-        assertEquals("eHour Configuration", Driver.getTitle());
+        assertEquals("sft Configuration", Driver.getTitle());
     }
 
     public static void checkSplitAdminRole() {
