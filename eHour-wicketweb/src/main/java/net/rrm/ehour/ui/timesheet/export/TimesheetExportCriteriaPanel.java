@@ -141,7 +141,7 @@ public class TimesheetExportCriteriaPanel extends AbstractBasePanel<ReportCriter
         @Override
         protected void onSubmit() {
             final ReportCriteria reportCriteria = mergeBillablesAndUnbillables();
-            final TimesheetExcelExport timesheetExcelExport = new TimesheetExcelExport(reportCriteria);
+            final net.rrm.ehour.ui.timesheet.export.eurodyn.TimesheetExcelExport timesheetExcelExport = new net.rrm.ehour.ui.timesheet.export.eurodyn.TimesheetExcelExport(reportCriteria);
 
             String filename = createFilename(reportCriteria);
 
