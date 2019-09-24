@@ -5,12 +5,14 @@ import net.rrm.ehour.ui.common.session.EhourWebSession
 import net.rrm.ehour.ui.common.util.AuthUtil
 import net.rrm.ehour.ui.login.page.Logout
 import net.rrm.ehour.ui.userprefs.page.UserPreferencePage
+import org.apache.wicket.Component
 import org.apache.wicket.markup.html.WebMarkupContainer
 import org.apache.wicket.markup.html.basic.Label
-import org.apache.wicket.markup.html.link.{BookmarkablePageLink, Link}
+import org.apache.wicket.markup.html.link.{BookmarkablePageLink, DownloadLink, Link, ResourceLink}
 import org.apache.wicket.markup.html.panel.Fragment
 import org.apache.wicket.model.Model
 import org.apache.wicket.spring.injection.annot.SpringBean
+import org.apache.wicket.util.file.File
 
 class LoggedInAsPanel(id: String) extends AbstractBasePanel(id) {
   @SpringBean
@@ -28,6 +30,10 @@ class LoggedInAsPanel(id: String) extends AbstractBasePanel(id) {
     addOrReplace(new BookmarkablePageLink("logoffLink", classOf[Logout]))
 
     addOrReplace(createImpersonatingPanel("impersonatingNotification"))
+
+    val filePath = System.getProperty("EHOUR_HOME") + "/guideline.pdf"
+    val guidelineLink = new File(filePath)
+    addOrReplace(new DownloadLink("guidelineLink", guidelineLink))
   }
 
   private def createImpersonatingPanel(id: String) = {
