@@ -22,7 +22,7 @@ import net.rrm.ehour.ui.common.report.Report;
 import net.rrm.ehour.ui.common.report.excel.ExcelWorkbook;
 import net.rrm.ehour.ui.common.util.WebUtils;
 import net.rrm.ehour.ui.timesheet.export.TimesheetExportParameter;
-import net.rrm.ehour.ui.timesheet.export.excel.part.*;
+import net.rrm.ehour.ui.timesheet.export.eurodyn.part.*;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.WorkbookUtil;
 
@@ -58,14 +58,13 @@ public class TimesheetExcelExport implements ExcelReport {
         String sheetName = WebUtils.formatDate("MMMM yyyy", report.getReportRange().getDateStart());
         Sheet sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(sheetName));
 
-        sheet.autoSizeColumn((short) (CELL_BORDER + ExportReportColumn.DATE.getColumn()));
-        sheet.autoSizeColumn((short) (CELL_BORDER + ExportReportColumn.CUSTOMER_CODE.getColumn()));
-        sheet.autoSizeColumn((short) (CELL_BORDER + ExportReportColumn.PROJECT.getColumn()));
-        sheet.autoSizeColumn((short) (CELL_BORDER + ExportReportColumn.PROJECT_CODE.getColumn()));
-        sheet.autoSizeColumn((short) (CELL_BORDER + ExportReportColumn.HOURS.getColumn()));
-        sheet.setColumnWidth(0, 1024);
+        sheet.setColumnWidth(0, 333);
+        sheet.setColumnWidth(1, 4000);
+        for(int i = 2; i <= 33; i++){
+            sheet.setColumnWidth(i, 800);
+        }
 
-        int rowNumber = 9;
+        int rowNumber = 3;
 
         rowNumber = new ExportReportHeader(CELL_BORDER, sheet, report, workbook).createPart(rowNumber);
         rowNumber = new ExportReportBodyHeader(CELL_BORDER, sheet, report, workbook).createPart(rowNumber);

@@ -22,8 +22,10 @@ import net.rrm.ehour.ui.common.report.excel.CellFactory;
 import net.rrm.ehour.ui.common.report.excel.ExcelStyle;
 import net.rrm.ehour.ui.common.report.excel.ExcelWorkbook;
 import net.rrm.ehour.ui.common.session.EhourWebSession;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.RegionUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -41,7 +43,10 @@ public abstract class AbstractExportReportPart
 	private Sheet sheet;
 	private Report report;
 	private ExcelWorkbook workbook;
-	
+
+	private CellStyle titleStyle;
+	private CellStyle dataStyle;
+
 	public AbstractExportReportPart(int cellMargin, Sheet sheet, Report report, ExcelWorkbook workbook)
 	{
 		this.cellMargin = cellMargin;
@@ -59,6 +64,51 @@ public abstract class AbstractExportReportPart
 		config = EhourWebSession.getEhourConfig();
 		Locale locale = config.getFormattingLocale();
 		formatter = new SimpleDateFormat("dd MMM yy", locale);
+		setStyles();
+	}
+
+	private void setStyles(){
+		titleStyle = workbook.getWorkbook().createCellStyle();
+		titleStyle.setBorderBottom(HSSFCellStyle.BORDER_MEDIUM);
+		titleStyle.setBorderTop(HSSFCellStyle.BORDER_MEDIUM);
+		titleStyle.setBorderRight(HSSFCellStyle.BORDER_MEDIUM);
+		titleStyle.setBorderLeft(HSSFCellStyle.BORDER_MEDIUM);
+		titleStyle.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.index);
+		titleStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+		titleStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		titleStyle.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
+
+		Font cellFontTtile = workbook.getWorkbook().createFont();
+		cellFontTtile.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		cellFontTtile.setFontName("Arial");
+		cellFontTtile.setFontHeightInPoints((short)10);
+		titleStyle.setFont(cellFontTtile);
+
+
+		dataStyle = workbook.getWorkbook().createCellStyle();
+		dataStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		dataStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		dataStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		dataStyle.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
+
+		Font cellFontData = workbook.getWorkbook().createFont();
+		cellFontData.setFontName("Arial");
+		cellFontData.setFontHeightInPoints((short)9);
+		dataStyle.setFont(cellFontData);
+	}
+
+	protected void setTitleBorders(CellRangeAddress cellRangeAddress){
+		RegionUtil.setBorderTop(CellStyle.BORDER_MEDIUM, cellRangeAddress, sheet, workbook.getWorkbook());
+		RegionUtil.setBorderBottom(CellStyle.BORDER_MEDIUM, cellRangeAddress, sheet, workbook.getWorkbook());
+		RegionUtil.setBorderLeft(CellStyle.BORDER_MEDIUM, cellRangeAddress, sheet, workbook.getWorkbook());
+		RegionUtil.setBorderRight(CellStyle.BORDER_MEDIUM, cellRangeAddress, sheet, workbook.getWorkbook());
+	}
+
+	protected void setDataBorders(CellRangeAddress cellRangeAddress){
+		RegionUtil.setBorderTop(CellStyle.BORDER_THIN, cellRangeAddress, sheet, workbook.getWorkbook());
+		RegionUtil.setBorderBottom(CellStyle.BORDER_THIN, cellRangeAddress, sheet, workbook.getWorkbook());
+		RegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress, sheet, workbook.getWorkbook());
+		RegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress, sheet, workbook.getWorkbook());
 	}
 
 	protected int getCellMargin()
@@ -90,7 +140,15 @@ public abstract class AbstractExportReportPart
 	{
 		return workbook;
 	}
-	
+
+	protected CellStyle getTitleStyle() {
+		return titleStyle;
+	}
+
+	protected CellStyle getDataStyle() {
+		return dataStyle;
+	}
+
 	protected void createEmptyCells(Row row, ExcelStyle excelStyle)
 	{
 		for (int i : ExportReportColumn.EMPTY.getColumns())
