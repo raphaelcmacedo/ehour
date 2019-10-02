@@ -31,31 +31,75 @@ import org.apache.wicket.model.ResourceModel;
  */
 public class ExportReportBodyHeader extends AbstractExportReportPart
 {
+
+	private int maxColumns = 0;
 	public ExportReportBodyHeader(int cellMargin, Sheet sheet, Report report, ExcelWorkbook workbook)
 	{
 		super(cellMargin, sheet, report, workbook);
 	}
 
+	private void createCell(Row row, int column, String text){
+		CellFactory.createCell(row, column, text, getWorkbook());
+		row.getCell(column).setCellStyle(getTitleStyle());
+	}
+
+	private void createDataCell(Row row, int column, String text){
+		CellFactory.createCell(row, column, text, getWorkbook());
+		row.getCell(column).setCellStyle(getDataStyle());
+	}
 	
 	public int createPart(int rowNumber)
 	{
-		Sheet sheet = getSheet();
-        ExcelWorkbook workbook = getWorkbook();
-		int cellMargin = getCellMargin();
-		
-		Row row = sheet.createRow(rowNumber);
-		
-        CellFactory.createCell(row, cellMargin + ExportReportColumn.DATE.getColumn(), new ResourceModel("excelMonth.body.date"), workbook, ExcelStyle.BOLD_BORDER_SOUTH);
-        CellFactory.createCell(row, cellMargin + ExportReportColumn.CUSTOMER_CODE.getColumn(), new ResourceModel("excelMonth.body.customerCode"), workbook, ExcelStyle.BOLD_BORDER_SOUTH);
-        CellFactory.createCell(row, cellMargin + ExportReportColumn.PROJECT.getColumn(), new ResourceModel("excelMonth.body.project"), workbook, ExcelStyle.BOLD_BORDER_SOUTH);
-        CellFactory.createCell(row, cellMargin + ExportReportColumn.PROJECT_CODE.getColumn(), new ResourceModel("excelMonth.body.projectCode"), workbook, ExcelStyle.BOLD_BORDER_SOUTH);
+		rowNumber = this.createHeaderColumns(rowNumber);
+		rowNumber = this.createMonthLines(rowNumber);
+		return rowNumber;
+	}
 
-		createEmptyCells(row, ExcelStyle.BORDER_SOUTH);
+	private int createHeaderColumns(int rowNumber){
+		Row row = getSheet().createRow(rowNumber);
+		row.setHeight((short)1000);
+		String[] headers = {
+				"MONTH", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
+				"18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31",
+				"Days worked", "Days remaining", "Estimate by consultant of end of services"
+		};
+		int i =1;
+		for(String header:headers){
+			this.createCell(row, i++, header);
+		}
+		maxColumns = i;
 
-		CellFactory.createCell(row, cellMargin + ExportReportColumn.HOURS.getColumn(), new ResourceModel("excelMonth.body.hours"), workbook, ExcelStyle.BOLD_BORDER_SOUTH);
-		
-		rowNumber++;
-		
+		return ++rowNumber;
+	}
+
+	private int createMonthLines(int rowNumber){
+		String[] months = {
+				"JANUARY",
+				"FEBRUARY",
+				"MARCH",
+				"APRIL",
+				"MAY",
+				"JUNE",
+				"JULY",
+				"AUGUST",
+				"SEPTEMBER",
+				"OCTOBER",
+				"NOVEMBER",
+				"DECEMBER"
+		};
+		for(String month:months){
+			int column = 1;
+		    Row row = getSheet().createRow(rowNumber++);
+			this.createCell(row, column++, month);
+
+			//Empty cells for the days of the month
+            while(column <= 33){
+                this.createDataCell(row, column++, "");
+            }
+			this.createDataCell(row, column++, "120");
+			this.createDataCell(row, column++, "");
+		}
+
 		return rowNumber;
 	}
 }

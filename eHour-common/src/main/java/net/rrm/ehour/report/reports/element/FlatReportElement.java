@@ -42,7 +42,11 @@ public class FlatReportElement implements ProjectStructuredReportElement {
     private Integer projectId;
     private String projectName;
     private String projectCode;
+    private String sectionLeader = "";
+    private String headOfUnit = "";
+    private String contractManager = "";
     private Integer assignmentId;
+    private Double assignmentDaysAllotted = 0.0;
     private String role;
     private Date dayDate;
     private String comment;
@@ -69,12 +73,16 @@ public class FlatReportElement implements ProjectStructuredReportElement {
         projectName = clone.projectName;
         projectCode = clone.projectCode;
         assignmentId = clone.assignmentId;
+        assignmentDaysAllotted = clone.assignmentDaysAllotted;
         role = clone.role;
         dayDate = clone.dayDate;
         comment = clone.comment;
         displayOrder = clone.displayOrder;
         lockableDate = clone.lockableDate;
         emptyEntry = clone.emptyEntry;
+        sectionLeader = clone.sectionLeader;
+        headOfUnit = clone.headOfUnit;
+        contractManager = clone.contractManager;
     }
 
 
@@ -292,6 +300,14 @@ public class FlatReportElement implements ProjectStructuredReportElement {
         this.assignmentId = assignmentId;
     }
 
+    public Double getAssignmentDaysAllotted() {
+        return assignmentDaysAllotted;
+    }
+
+    public void setAssignmentDaysAllotted(Double assignmentDaysAllotted) {
+        this.assignmentDaysAllotted = assignmentDaysAllotted;
+    }
+
     /**
      * @return the dayDate
      */
@@ -312,6 +328,30 @@ public class FlatReportElement implements ProjectStructuredReportElement {
 
     public void setProjectCode(String projectCode) {
         this.projectCode = projectCode;
+    }
+
+    public String getSectionLeader() {
+        return sectionLeader;
+    }
+
+    public void setSectionLeader(String sectionLeader) {
+        this.sectionLeader = sectionLeader;
+    }
+
+    public String getHeadOfUnit() {
+        return headOfUnit;
+    }
+
+    public void setHeadOfUnit(String headOfUnit) {
+        this.headOfUnit = headOfUnit;
+    }
+
+    public String getContractManager() {
+        return contractManager;
+    }
+
+    public void setContractManager(String contractManager) {
+        this.contractManager = contractManager;
     }
 
     @Override

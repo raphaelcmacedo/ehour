@@ -42,19 +42,36 @@ public class ExportReportTotal extends AbstractExportReportPart
 	@Override
 	public int createPart(int rowNumber)
 	{
+		rowNumber++;
 		Row row = getSheet().createRow(rowNumber++);
-		
-		addTotalLabel(row);
 
-		float total = getTotal();
-		addTotalValue(total, row);
+		CellFactory.createCell(row, 3, "", getWorkbook());
+		row.getCell(3).setCellStyle(getWeekendStyle());
+		CellFactory.createCell(row, 4, "Weekend", getWorkbook());
 
+		CellFactory.createCell(row, 6, "", getWorkbook());
+		row.getCell(6).setCellStyle(getHolidayStyle());
+		CellFactory.createCell(row, 7, "Official holiday EU Institution", getWorkbook());
 
-        createEmptyCells(row, ExcelStyle.BORDER_NORTH);
-		CellFactory.createCell(row, getCellMargin() + ExportReportColumn.CUSTOMER_CODE.getColumn(), getWorkbook(), ExcelStyle.BORDER_NORTH);
-		CellFactory.createCell(row, getCellMargin() + ExportReportColumn.PROJECT.getColumn(), getWorkbook(), ExcelStyle.BORDER_NORTH);
-        CellFactory.createCell(row, getCellMargin() + ExportReportColumn.PROJECT_CODE.getColumn(), getWorkbook(), ExcelStyle.BORDER_NORTH);
-		
+		CellFactory.createCell(row, 23, "Complete working day = 1", getWorkbook());
+
+		row = getSheet().createRow(rowNumber++);
+		CellFactory.createCell(row, 23, "Half working day = 0.5", getWorkbook());
+
+		row = getSheet().createRow(rowNumber++);
+
+		CellFactory.createCell(row, 3, "V", getWorkbook());
+		CellFactory.createCell(row, 4, "Vacation", getWorkbook());
+
+		CellFactory.createCell(row, 6, "S", getWorkbook());
+		CellFactory.createCell(row, 7, "Sickness", getWorkbook());
+
+		CellFactory.createCell(row, 8, "t", getWorkbook());
+		CellFactory.createCell(row, 7, "Training", getWorkbook());
+
+		CellFactory.createCell(row, 10, "TO", getWorkbook());
+		CellFactory.createCell(row, 11, "Take-Over", getWorkbook());
+
 		return rowNumber;
 	}
 

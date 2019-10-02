@@ -25,7 +25,9 @@ import net.rrm.ehour.ui.common.report.excel.ExcelStyle;
 import net.rrm.ehour.ui.common.report.excel.ExcelWorkbook;
 import net.rrm.ehour.util.DateUtil;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -38,136 +40,135 @@ import java.util.*;
  * @author Thies Edeling (thies@te-con.nl)
  */
 public class ExportReportBody extends AbstractExportReportPart {
+
+    private static final int ROW_FIRST_MONTH = 12;
+    private static final int COLUMN_FIRST_DAY = 1;
+
+    private Map<Integer, Double> daysWorked = new TreeMap<Integer, Double>();
+    private Double daysRemaining;
+
+    private void initDaysWorked(){
+        for(int i =0; i < 12; i++){
+            daysWorked.put(i,0.0);
+        }
+    }
+
     public ExportReportBody(int cellMargin, Sheet sheet, Report report, ExcelWorkbook workbook) {
         super(cellMargin, sheet, report, workbook);
+        initDaysWorked();
+    }
+
+    private void createCell(Calendar calendar, String text, CellStyle cellStyle){
+        int rowNumber = calendar.get(Calendar.MONTH) + ROW_FIRST_MONTH;
+        int colNumber = calendar.get(Calendar.DAY_OF_MONTH) + COLUMN_FIRST_DAY;
+
+        Row row = getSheet().getRow(rowNumber);
+
+        String currentText = row.getCell(colNumber).getStringCellValue();
+        if(NumberUtils.isNumber(currentText)){//If the cell already contains numbers don't replace it
+            return;
+        }
+
+        CellFactory.createCell(row, colNumber, text, getWorkbook());
+        row.getCell(colNumber).setCellStyle(cellStyle);
     }
 
     @Override
     public int createPart(int rowNumber) {
-        Map<Date, List<FlatReportElement>> dateMap = getElementsAsDateMap(getReport());
+        markAllWeekends();
+
+        List<FlatReportElement> elements = (List<FlatReportElement>) getReport().getReportData().getReportElements();
         List<Date> dateSequence = DateUtil.createDateSequence(getReport().getReportRange(), getConfig());
+        setDataToReport(elements);
 
-        rowNumber = createRowForDateSequence(rowNumber, dateMap, dateSequence);
-
-        return rowNumber;
-    }
-
-    private int createRowForDateSequence(int rowNumber, Map<Date, List<FlatReportElement>> dateMap, List<Date> dateSequence) {
-        for (Date date : dateSequence) {
-            List<FlatReportElement> flatList = dateMap.get(date);
-
-            boolean borderCells = isFirstDayOfWeek(date);
-
-            rowNumber = !CollectionUtils.isEmpty(flatList) ? addColumnsToRow(date, flatList, rowNumber, borderCells) : addEmptyRow(rowNumber, date, borderCells);
-        }
-        return rowNumber;
-    }
-
-    private boolean isFirstDayOfWeek(Date date) {
-        Calendar cal = GregorianCalendar.getInstance();
-        cal.setTime(date);
-
-        return cal.get(Calendar.DAY_OF_WEEK) == getConfig().getFirstDayOfWeek();
-    }
-
-    private int addEmptyRow(int rowNumber, Date date, boolean isBorder) {
-        Row row = getSheet().createRow(rowNumber++);
-        createDateCell(date, row, isBorder);
-
-        if (isBorder) {
-            ExcelStyle border = ExcelStyle.BORDER_NORTH_THIN;
-
-            createEmptyCells(row, border);
-
-            CellFactory.createCell(row, getCellMargin() + ExportReportColumn.CUSTOMER_CODE.getColumn(), getWorkbook(), border);
-            CellFactory.createCell(row, getCellMargin() + ExportReportColumn.PROJECT.getColumn(), getWorkbook(), border);
-            CellFactory.createCell(row, getCellMargin() + ExportReportColumn.PROJECT_CODE.getColumn(), getWorkbook(), border);
-            CellFactory.createCell(row, getCellMargin() + ExportReportColumn.HOURS.getColumn(), getWorkbook(), border);
-        }
+        writeSubtotals();
 
         return rowNumber;
     }
 
-    private int addColumnsToRow(Date date, List<FlatReportElement> elements, int rowNumber, boolean isBorder) {
-        boolean addedForDate = false;
-
-        for (FlatReportElement flatReportElement : elements) {
-            Row row = getSheet().createRow(rowNumber);
-
-            if (flatReportElement.getTotalHours() != null && flatReportElement.getTotalHours().doubleValue() >= 0.0) {
-                createDateCell(date, row, isBorder);
-                createProjectCell(flatReportElement.getProjectName(), row, isBorder);
-                createProjectCodeCell(flatReportElement.getProjectCode(), row, isBorder);
-                createHoursCell(flatReportElement.getTotalHours(), row, isBorder);
-                createCustomerCodeCell(flatReportElement.getCustomerCode(), row, isBorder);
-
-                if (isBorder) {
-                    createEmptyCells(row, ExcelStyle.BORDER_NORTH_THIN);
-
-                    getSheet().addMergedRegion(new CellRangeAddress(rowNumber, rowNumber, getCellMargin() + 3, getCellMargin() + 5));
-                }
-
-                rowNumber++;
-                addedForDate = true;
-            }
-        }
-
-        if (!addedForDate) {
-            Row row = getSheet().createRow(rowNumber++);
-            createDateCell(date, row, isBorder);
-        }
-
-        return rowNumber;
-
-    }
-
-    private Cell createHoursCell(Number hours, Row row, boolean isBorder) {
-        return CellFactory.createCell(row, getCellMargin() + ExportReportColumn.HOURS.getColumn(), hours, getWorkbook(), (isBorder) ? ExcelStyle.DIGIT_BORDER_NORTH_THIN : ExcelStyle.DIGIT);
-    }
-
-    private Cell createProjectCell(String project, Row row, boolean isBorder) {
-        return CellFactory.createCell(row, getCellMargin() + ExportReportColumn.PROJECT.getColumn(), project, getWorkbook(), (isBorder) ? ExcelStyle.BORDER_NORTH_THIN : ExcelStyle.NORMAL_FONT);
-    }
-
-    private Cell createProjectCodeCell(String project, Row row, boolean isBorder) {
-        return CellFactory.createCell(row, getCellMargin() + ExportReportColumn.PROJECT_CODE.getColumn(), project, getWorkbook(), (isBorder) ? ExcelStyle.BORDER_NORTH_THIN : ExcelStyle.NORMAL_FONT);
-    }
-
-
-    private Cell createCustomerCodeCell(String customerCode, Row row, boolean isBorder) {
-        return CellFactory.createCell(row, getCellMargin() + ExportReportColumn.CUSTOMER_CODE.getColumn(), customerCode, getWorkbook(), (isBorder) ? ExcelStyle.BORDER_NORTH_THIN : ExcelStyle.NORMAL_FONT);
-    }
-
-    private Cell createDateCell(Date date, Row row, boolean isBorder) {
-        return CellFactory.createCell(row, getCellMargin() + ExportReportColumn.DATE.getColumn(), getFormatter().format(date), getWorkbook(), (isBorder) ? ExcelStyle.DATE_BORDER_NORTH_THIN : ExcelStyle.DATE);
-    }
-
-    /**
-     * Return a map with the key being the report's date and a list of a report elements for that date as the value
-     */
-    private Map<Date, List<FlatReportElement>> getElementsAsDateMap(Report report) {
-        Map<Date, List<FlatReportElement>> flatMap = new TreeMap<>();
-
-        ReportData reportData = report.getReportData();
-
-        for (ReportElement reportElement : reportData.getReportElements()) {
-            FlatReportElement flat = (FlatReportElement) reportElement;
-
-            Date date = DateUtil.nullifyTime(flat.getDayDate());
-
-            List<FlatReportElement> dateElements;
-
-            if (flatMap.containsKey(date)) {
-                dateElements = flatMap.get(date);
-            } else {
-                dateElements = new ArrayList<>();
+    private void setDataToReport(List<FlatReportElement> elements){
+        for (FlatReportElement element : elements){
+            if(!isContractorElement(element) && daysRemaining == null){
+                daysRemaining = element.getAssignmentDaysAllotted();
             }
 
-            dateElements.add(flat);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(element.getDayDate());
 
-            flatMap.put(date, dateElements);
+            String text = "";
+            CellStyle cellStyle = getDataStyle();
+            if(this.isWeekend(calendar)){
+                cellStyle = getWeekendStyle();
+            }else if(element.getLocked() != null && element.getLocked()){
+                cellStyle = getHolidayStyle();
+            }else{
+                text = getTextForReport(element, calendar);
+            }
+
+            this.createCell(calendar, text, cellStyle);
         }
-
-        return flatMap;
     }
+
+    private String getTextForReport(FlatReportElement element, Calendar calendar){
+        double totalHours = (double) element.getTotalHours();
+        int month = calendar.get(Calendar.MONTH);
+        double sum = daysWorked.get(month);
+
+        if(isContractorElement(element)){
+            return element.getProjectCode();
+        }else if(totalHours == 8){
+            sum += 1;
+            daysWorked.put(month, sum);
+            return "1";
+        }else if(totalHours > 0 && totalHours < 8){
+            sum += 0.5;
+            daysWorked.put(month, sum);
+            return "0.5";
+        }
+        return "";
+    }
+
+    private boolean isWeekend(Calendar calendar){
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        return (Calendar.SUNDAY == dayOfWeek || Calendar.SATURDAY == dayOfWeek);
+    }
+
+    private void markAllWeekends(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(Calendar.DAY_OF_MONTH,1);
+        calendar.set(Calendar.MONTH,0);
+
+        int year = calendar.get(Calendar.YEAR);
+        while(calendar.get(Calendar.YEAR) == year){
+            if(isWeekend(calendar)){
+                this.createCell(calendar, "", getWeekendStyle());
+            }
+            calendar.add(Calendar.DATE,1);
+        }
+    }
+
+    private void writeSubtotals(){
+        int colNumberDaysWorked = 32 + COLUMN_FIRST_DAY;
+        int colNumberDaysRemaining = 33 + COLUMN_FIRST_DAY;
+
+        for(Integer month : daysWorked.keySet()){
+            int rowNumber = month + ROW_FIRST_MONTH;
+            Row row = getSheet().getRow(rowNumber);
+
+            double days = daysWorked.get(month);
+            daysRemaining -= days;
+
+            CellFactory.createCell(row, colNumberDaysWorked, String.valueOf(days), getWorkbook());
+            row.getCell(colNumberDaysWorked).setCellStyle(getDataStyle());
+
+            CellFactory.createCell(row, colNumberDaysRemaining, String.valueOf(daysRemaining), getWorkbook());
+            row.getCell(colNumberDaysRemaining).setCellStyle(getDataStyle());
+
+
+        }
+    }
+
+
+
 }

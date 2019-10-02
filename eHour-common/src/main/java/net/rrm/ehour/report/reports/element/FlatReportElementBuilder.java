@@ -14,6 +14,11 @@ public class FlatReportElementBuilder {
 
         element.setAssignmentId(assignment.getAssignmentId());
         element.setRole(assignment.getRole());
+        if(assignment.getAllottedHours() != null && assignment.getAllottedHours() > 0){
+            double daysAlloted = assignment.getAllottedHours() / 8;
+            element.setAssignmentDaysAllotted(daysAlloted);
+        }
+
 
         Project project = assignment.getProject();
         Customer customer = project.getCustomer();
@@ -26,6 +31,15 @@ public class FlatReportElementBuilder {
         element.setProjectCode(project.getProjectCode());
         element.setProjectId(project.getProjectId());
         element.setProjectName(project.getName());
+        if(project.getSectionLeader() != null){
+            element.setSectionLeader(project.getSectionLeader().getFullName());
+        }
+        if(project.getHeadOfUnit() != null){
+            element.setHeadOfUnit(project.getHeadOfUnit().getFullName());
+        }
+        if(project.getContractManager() != null){
+            element.setContractManager(project.getContractManager().getFullName());
+        }
 
         element.setRate(assignment.getHourlyRate());
 

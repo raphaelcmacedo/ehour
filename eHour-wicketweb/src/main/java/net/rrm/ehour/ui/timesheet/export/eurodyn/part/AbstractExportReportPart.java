@@ -17,6 +17,7 @@
 package net.rrm.ehour.ui.timesheet.export.eurodyn.part;
 
 import net.rrm.ehour.config.EhourConfig;
+import net.rrm.ehour.report.reports.element.FlatReportElement;
 import net.rrm.ehour.ui.common.report.Report;
 import net.rrm.ehour.ui.common.report.excel.CellFactory;
 import net.rrm.ehour.ui.common.report.excel.ExcelStyle;
@@ -29,6 +30,8 @@ import org.apache.poi.ss.util.RegionUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created on Mar 25, 2009, 3:34:34 PM
@@ -37,6 +40,8 @@ import java.util.Locale;
  */
 public abstract class AbstractExportReportPart
 {
+    protected static final String CONTRACTOR_CUSTOMER = "Contractor";
+
 	private int cellMargin;
 	private EhourConfig config;
 	private SimpleDateFormat formatter;
@@ -46,6 +51,8 @@ public abstract class AbstractExportReportPart
 
 	private CellStyle titleStyle;
 	private CellStyle dataStyle;
+	private CellStyle weekendStyle;
+	private CellStyle holidayStyle;
 
 	public AbstractExportReportPart(int cellMargin, Sheet sheet, Report report, ExcelWorkbook workbook)
 	{
@@ -95,6 +102,22 @@ public abstract class AbstractExportReportPart
 		cellFontData.setFontName("Arial");
 		cellFontData.setFontHeightInPoints((short)9);
 		dataStyle.setFont(cellFontData);
+
+		weekendStyle = workbook.getWorkbook().createCellStyle();
+		weekendStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		weekendStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		weekendStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		weekendStyle.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
+		weekendStyle.setFillForegroundColor(IndexedColors.LIGHT_ORANGE.index);
+		weekendStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+		holidayStyle = workbook.getWorkbook().createCellStyle();
+		holidayStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		holidayStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		holidayStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		holidayStyle.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
+		holidayStyle.setFillForegroundColor(IndexedColors.LIGHT_ORANGE.index);
+		holidayStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 	}
 
 	protected void setTitleBorders(CellRangeAddress cellRangeAddress){
@@ -110,6 +133,10 @@ public abstract class AbstractExportReportPart
 		RegionUtil.setBorderLeft(CellStyle.BORDER_THIN, cellRangeAddress, sheet, workbook.getWorkbook());
 		RegionUtil.setBorderRight(CellStyle.BORDER_THIN, cellRangeAddress, sheet, workbook.getWorkbook());
 	}
+
+	protected boolean isContractorElement(FlatReportElement element){
+	    return element.getCustomerCode().equals(CONTRACTOR_CUSTOMER);
+    }
 
 	protected int getCellMargin()
 	{
@@ -149,11 +176,16 @@ public abstract class AbstractExportReportPart
 		return dataStyle;
 	}
 
+	protected CellStyle getWeekendStyle() {
+		return weekendStyle;
+	}
+
+	protected CellStyle getHolidayStyle() {
+		return holidayStyle;
+	}
+
 	protected void createEmptyCells(Row row, ExcelStyle excelStyle)
 	{
-		for (int i : ExportReportColumn.EMPTY.getColumns())
-		{
-			CellFactory.createCell(row, getCellMargin() + i, getWorkbook(), excelStyle);
-		}
+
 	}	
 }
