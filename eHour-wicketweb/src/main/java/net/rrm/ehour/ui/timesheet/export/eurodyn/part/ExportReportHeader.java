@@ -28,12 +28,14 @@ import net.rrm.ehour.ui.common.report.excel.CellFactory;
 import net.rrm.ehour.ui.common.report.excel.ExcelWorkbook;
 import net.rrm.ehour.ui.common.session.EhourWebSession;
 import net.rrm.ehour.ui.common.util.WebUtils;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.Calendar;
 
 
 public class ExportReportHeader extends AbstractExportReportPart
@@ -67,6 +69,7 @@ public class ExportReportHeader extends AbstractExportReportPart
     public int createPart(int rowNumber)
     {
         FlatReportElement data = getReportElement();
+        rowNumber = addHeader(rowNumber);
         rowNumber = addFirstTitleRow(rowNumber);
         rowNumber = addFirstTitleDataRow(rowNumber, data);
         rowNumber = addSecondTitleRow(rowNumber);
@@ -110,6 +113,27 @@ public class ExportReportHeader extends AbstractExportReportPart
         CellRangeAddress cellRangeAddress = this.createCell(row, firstColumn, lastColumn, text);
         setDataBorders(cellRangeAddress);
         row.getCell(firstColumn).setCellStyle(getDataStyle());
+    }
+
+    private int addHeader(int rowNumber)
+    {
+        Row row = getSheet().createRow(rowNumber++);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(getReport().getReportRange().getDateStart());
+
+        CellStyle cellStyle = getWorkbook().getWorkbook().createCellStyle();
+        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+
+        Font cellFont = getWorkbook().getWorkbook().createFont();
+        cellFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        cellFont.setFontName("Arial");
+        cellFont.setFontHeightInPoints((short)10);
+        cellStyle.setFont(cellFont);
+
+        CellRangeAddress cellRangeAddress = this.createCell(row, DG_COLUMN, DG_COLUMN + 3, String.valueOf(calendar.get(Calendar.YEAR)));
+        row.getCell(DG_COLUMN).setCellStyle(cellStyle);
+
+        return ++rowNumber;
     }
 
     private int addFirstTitleRow(int rowNumber)

@@ -53,6 +53,8 @@ public abstract class AbstractExportReportPart
 	private CellStyle dataStyle;
 	private CellStyle weekendStyle;
 	private CellStyle holidayStyle;
+	private CellStyle footerStyle;
+	private CellStyle footerBorderStyle;
 
 	public AbstractExportReportPart(int cellMargin, Sheet sheet, Report report, ExcelWorkbook workbook)
 	{
@@ -104,20 +106,36 @@ public abstract class AbstractExportReportPart
 		dataStyle.setFont(cellFontData);
 
 		weekendStyle = workbook.getWorkbook().createCellStyle();
+		weekendStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 		weekendStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
 		weekendStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
 		weekendStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
 		weekendStyle.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
-		weekendStyle.setFillForegroundColor(IndexedColors.LIGHT_ORANGE.index);
+		weekendStyle.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.index);
 		weekendStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
 		holidayStyle = workbook.getWorkbook().createCellStyle();
+		holidayStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 		holidayStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
 		holidayStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
 		holidayStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
 		holidayStyle.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
 		holidayStyle.setFillForegroundColor(IndexedColors.LIGHT_ORANGE.index);
 		holidayStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+		footerStyle = workbook.getWorkbook().createCellStyle();
+		Font footerFont = workbook.getWorkbook().createFont();
+		footerFont.setFontName("Arial");
+		footerFont.setFontHeightInPoints((short)8);
+		footerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		footerStyle.setFont(footerFont);
+
+		footerBorderStyle = workbook.getWorkbook().createCellStyle();
+		footerBorderStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		footerBorderStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		footerBorderStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		footerBorderStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		footerBorderStyle.setFont(footerFont);
 	}
 
 	protected void setTitleBorders(CellRangeAddress cellRangeAddress){
@@ -182,6 +200,14 @@ public abstract class AbstractExportReportPart
 
 	protected CellStyle getHolidayStyle() {
 		return holidayStyle;
+	}
+
+	protected CellStyle getFooterStyle() {
+		return footerStyle;
+	}
+
+	protected CellStyle getFooterBorderStyle() {
+		return footerBorderStyle;
 	}
 
 	protected void createEmptyCells(Row row, ExcelStyle excelStyle)

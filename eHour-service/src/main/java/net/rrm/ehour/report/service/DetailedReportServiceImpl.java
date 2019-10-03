@@ -21,6 +21,7 @@ import net.rrm.ehour.data.DateRange;
 import net.rrm.ehour.domain.Project;
 import net.rrm.ehour.domain.ProjectAssignment;
 import net.rrm.ehour.domain.User;
+import net.rrm.ehour.persistence.project.dao.ProjectAssignmentDao;
 import net.rrm.ehour.persistence.project.dao.ProjectDao;
 import net.rrm.ehour.persistence.report.dao.DetailedReportDao;
 import net.rrm.ehour.persistence.report.dao.ReportAggregatedDao;
@@ -42,15 +43,18 @@ import java.util.List;
  */
 @Service("detailedReportService")
 public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatReportElement> implements DetailedReportService {
+    private static final String CONTRACTOR_CUSTOMER_CODE = "Contractor";
     private DetailedReportDao detailedReportDao;
+    private ProjectAssignmentDao projectAssignmentDao;
 
     DetailedReportServiceImpl() {
     }
 
     @Autowired
-    public DetailedReportServiceImpl(ReportCriteriaService reportCriteriaService, ProjectDao projectDao, TimesheetLockService lockService, DetailedReportDao detailedReportDao, ReportAggregatedDao reportAggregatedDAO) {
+    public DetailedReportServiceImpl(ReportCriteriaService reportCriteriaService, ProjectDao projectDao, TimesheetLockService lockService, DetailedReportDao detailedReportDao, ReportAggregatedDao reportAggregatedDAO, ProjectAssignmentDao projectAssignmentDao) {
         super(reportCriteriaService, projectDao, lockService, reportAggregatedDAO);
         this.detailedReportDao = detailedReportDao;
+        this.projectAssignmentDao = projectAssignmentDao;
     }
 
     public ReportData getDetailedReportData(ReportCriteria reportCriteria) {
@@ -108,6 +112,44 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
         } else {
             elements = detailedReportDao.getHoursPerDayForProjectsAndUsers(projectIds, userIds, reportRange);
         }
+
+        this.setCustomFields(elements);
         return elements;
     }
+
+    private void setCustomFields(List<FlatReportElement> elements){
+        if(elements != null && !elements.isEmpty()){
+            Integer projectAssignmentId = null;
+            for(FlatReportElement element:elements){
+                if(!element.getCustomerCode().equals(CONTRACTOR_CUSTOMER_CODE)){
+                    projectAssignmentId = element.getAssignmentId();
+                    break;
+                }
+            }
+
+            ProjectAssignment assignment = projectAssignmentDao.findById(projectAssignmentId);
+            String sectionLeader = "";
+            if(assignment.getProject().getSectionLeader() != null){
+                sectionLeader = assignment.getProject().getSectionLeader().getFullName();
+            }
+
+            String headOfUnit = "";
+            if(assignment.getProject().getHeadOfUnit() != null){
+                headOfUnit = assignment.getProject().getHeadOfUnit().getFullName();
+            }
+
+            double allottedDays = 0.0;
+            if(assignment.getAllottedHours() > 0){
+                allottedDays = assignment.getAllottedHours() / 8;
+            }
+
+            for(FlatReportElement element:elements){
+                element.setSectionLeader(sectionLeader);
+                element.setHeadOfUnit(headOfUnit);
+                element.setAssignmentDaysAllotted(allottedDays);
+            }
+
+        }
+    }
+
 }

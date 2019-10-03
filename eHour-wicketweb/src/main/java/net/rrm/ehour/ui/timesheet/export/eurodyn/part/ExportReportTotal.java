@@ -48,29 +48,41 @@ public class ExportReportTotal extends AbstractExportReportPart
 		CellFactory.createCell(row, 3, "", getWorkbook());
 		row.getCell(3).setCellStyle(getWeekendStyle());
 		CellFactory.createCell(row, 4, "Weekend", getWorkbook());
+		row.getCell(4).setCellStyle(getFooterStyle());
 
-		CellFactory.createCell(row, 6, "", getWorkbook());
-		row.getCell(6).setCellStyle(getHolidayStyle());
-		CellFactory.createCell(row, 7, "Official holiday EU Institution", getWorkbook());
+		CellFactory.createCell(row, 7, "", getWorkbook());
+		row.getCell(7).setCellStyle(getHolidayStyle());
+		CellFactory.createCell(row, 8, "Official holiday EU Institution", getWorkbook());
+		row.getCell(8).setCellStyle(getFooterStyle());
 
 		CellFactory.createCell(row, 23, "Complete working day = 1", getWorkbook());
+		row.getCell(23).setCellStyle(getFooterStyle());
 
 		row = getSheet().createRow(rowNumber++);
 		CellFactory.createCell(row, 23, "Half working day = 0.5", getWorkbook());
+		row.getCell(23).setCellStyle(getFooterStyle());
 
 		row = getSheet().createRow(rowNumber++);
 
 		CellFactory.createCell(row, 3, "V", getWorkbook());
+		row.getCell(3).setCellStyle(getFooterBorderStyle());
 		CellFactory.createCell(row, 4, "Vacation", getWorkbook());
+		row.getCell(4).setCellStyle(getFooterStyle());
 
-		CellFactory.createCell(row, 6, "S", getWorkbook());
-		CellFactory.createCell(row, 7, "Sickness", getWorkbook());
+		CellFactory.createCell(row, 7, "S", getWorkbook());
+		row.getCell(7).setCellStyle(getFooterBorderStyle());
+		CellFactory.createCell(row, 8, "Sickness", getWorkbook());
+		row.getCell(8).setCellStyle(getFooterStyle());
 
-		CellFactory.createCell(row, 8, "t", getWorkbook());
-		CellFactory.createCell(row, 7, "Training", getWorkbook());
+		CellFactory.createCell(row, 11, "t", getWorkbook());
+		row.getCell(11).setCellStyle(getFooterBorderStyle());
+		CellFactory.createCell(row, 12, "Training", getWorkbook());
+		row.getCell(12).setCellStyle(getFooterStyle());
 
-		CellFactory.createCell(row, 10, "TO", getWorkbook());
-		CellFactory.createCell(row, 11, "Take-Over", getWorkbook());
+		CellFactory.createCell(row, 15, "TO", getWorkbook());
+		row.getCell(15).setCellStyle(getFooterBorderStyle());
+		CellFactory.createCell(row, 16, "Take-Over", getWorkbook());
+		row.getCell(16).setCellStyle(getFooterStyle());
 
 		return rowNumber;
 	}

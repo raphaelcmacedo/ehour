@@ -19,6 +19,7 @@ package net.rrm.ehour.report.service;
 import com.google.common.collect.Lists;
 import net.rrm.ehour.data.DateRange;
 import net.rrm.ehour.domain.*;
+import net.rrm.ehour.persistence.project.dao.ProjectAssignmentDao;
 import net.rrm.ehour.persistence.project.dao.ProjectDao;
 import net.rrm.ehour.persistence.report.dao.DetailedReportDao;
 import net.rrm.ehour.persistence.report.dao.ReportAggregatedDao;
@@ -58,6 +59,7 @@ public class DetailedReportServiceImplTest {
     private TimesheetLockService timesheetLockService;
     private ProjectDao projectDao;
     private ReportAggregatedDao reportAggregatedDao;
+    private ProjectAssignmentDao projectAssignmentDao;
 
     @Before
     public void setUp() throws Exception {
@@ -74,7 +76,9 @@ public class DetailedReportServiceImplTest {
 
         reportAggregatedDao = mock(ReportAggregatedDao.class);
 
-        detailedReportService = new DetailedReportServiceImpl(reportCriteriaService, projectDao, timesheetLockService, detailedReportDao, reportAggregatedDao);
+        projectAssignmentDao = mock(ProjectAssignmentDao.class);
+
+        detailedReportService = new DetailedReportServiceImpl(reportCriteriaService, projectDao, timesheetLockService, detailedReportDao, reportAggregatedDao, projectAssignmentDao);
     }
 
     private void provideNoLocks() {
