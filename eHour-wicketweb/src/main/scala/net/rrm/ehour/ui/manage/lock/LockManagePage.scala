@@ -91,11 +91,11 @@ class LockManagePage extends AbstractTabbedManagePage[LockAdminBackingBean](new 
     event.getPayload match {
       case event: LockAddedEvent =>
         val lock = event.lock
-        lockService.createNew(Option.apply(lock.getName), lock.getDateStart, lock.getDateEnd, lock.getExcludedUsers)
+        lockService.createNew(Option.apply(lock.getName), lock.getDateStart, lock.getDateEnd, lock.getHoliday, lock.getExcludedUsers)
         update(event)
       case event: LockEditedEvent =>
         val lock = event.lock
-        lockService.updateExisting(lock.getLockId, lock.getDateStart, lock.getDateEnd, lock.getName, lock.getExcludedUsers)
+        lockService.updateExisting(lock.getLockId, lock.getDateStart, lock.getDateEnd, lock.getName, lock.getHoliday, lock.getExcludedUsers)
         update(event)
       case event: UnlockedEvent =>
         val lock = event.lock
@@ -108,7 +108,7 @@ class LockManagePage extends AbstractTabbedManagePage[LockAdminBackingBean](new 
   protected def getNewAddBaseBackingBean: LockAdminBackingBean = {
     val start = new DateTime().withDayOfMonth(1).toDate
     val end = new DateTime().withDayOfMonth(1).plusMonths(1).minusDays(1).toDate
-    new LockAdminBackingBean(new TimesheetLock(start, end)).updateName(EhourWebSession.getEhourConfig.getFormattingLocale)
+    new LockAdminBackingBean(new TimesheetLock(start, end, false)).updateName(EhourWebSession.getEhourConfig.getFormattingLocale)
   }
 
   protected def getNewEditBaseBackingBean: LockAdminBackingBean = new LockAdminBackingBean(new TimesheetLock())

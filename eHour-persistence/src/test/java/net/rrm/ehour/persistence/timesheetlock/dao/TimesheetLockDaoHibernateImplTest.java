@@ -26,7 +26,7 @@ public class TimesheetLockDaoHibernateImplTest extends AbstractAnnotationDaoTest
     @Test
     public void shouldPersistWithoutExclusions() {
         Date startDate = new Date();
-        TimesheetLock timesheetLock = new TimesheetLock(startDate, new Date());
+        TimesheetLock timesheetLock = new TimesheetLock(startDate, new Date(), false);
         TimesheetLock id = timesheetLockDao.persist(timesheetLock);
         Assert.assertNotNull(id);
 
@@ -37,7 +37,7 @@ public class TimesheetLockDaoHibernateImplTest extends AbstractAnnotationDaoTest
     @Test
     public void shouldPersistWithExclusions() {
         Date startDate = new Date();
-        TimesheetLock timesheetLock = new TimesheetLock(startDate, new Date());
+        TimesheetLock timesheetLock = new TimesheetLock(startDate, new Date(), false);
 
         timesheetLock.setExcludedUsers(Lists.newArrayList(UserObjectMother.createUser()));
         TimesheetLock id = timesheetLockDao.persist(timesheetLock);

@@ -47,7 +47,7 @@ class LockManagePageSpec extends AbstractSpringWebAppSpec {
 
       page.send(page, Broadcast.DEPTH, LockAddedEvent(lock, target))
 
-      verify(service).createNew(None, lock.getDateStart, lock.getDateEnd, Lists.newArrayList())
+      verify(service).createNew(None, lock.getDateStart, lock.getDateEnd, lock.getHoliday, Lists.newArrayList())
       verify(service, times(2)).findAll()
       verify(target, times(2)).add(any(classOf[Component]))
 
@@ -62,7 +62,7 @@ class LockManagePageSpec extends AbstractSpringWebAppSpec {
 
       page.send(page, Broadcast.DEPTH, LockEditedEvent(lock, target))
 
-      verify(service).updateExisting(5, lock.getDateStart, lock.getDateEnd, lock.getName, Lists.newArrayList())
+      verify(service).updateExisting(5, lock.getDateStart, lock.getDateEnd, lock.getName, lock.getHoliday, Lists.newArrayList())
       verify(service, times(2)).findAll()
       verify(target, times(2)).add(any(classOf[Component]))
 

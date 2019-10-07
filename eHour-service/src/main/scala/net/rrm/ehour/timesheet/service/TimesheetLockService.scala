@@ -21,9 +21,9 @@ import org.springframework.transaction.annotation.Transactional
 import scala.language.implicitConversions
 
 trait TimesheetLockService {
-  def createNew(name: Option[String] = None, startDate: Date, endDate: Date, excludedUsers: ju.List[User]): TimesheetLock
+  def createNew(name: Option[String] = None, startDate: Date, endDate: Date, holiday: Boolean, excludedUsers: ju.List[User]): TimesheetLock
 
-  def updateExisting(id: Int, startDate: Date, endDate: Date, name: String, excludedUsers: ju.List[User]): TimesheetLock
+  def updateExisting(id: Int, startDate: Date, endDate: Date, name: String, holiday: Boolean, excludedUsers: ju.List[User]): TimesheetLock
 
   def deleteLock(id: Int)
 
@@ -65,10 +65,10 @@ object TimesheetLockService {
 class TimesheetLockServiceSpringImpl @Autowired()(lockDao: TimesheetLockDao, timesheetDao: TimesheetDao) extends TimesheetLockService {
 
   @Transactional
-  override def createNew(optionalName: Option[String] = None, startDate: Date, endDate: Date, excludedUsers: ju.List[User] = Lists.newArrayList()): TimesheetLock = {
+  override def createNew(optionalName: Option[String] = None, startDate: Date, endDate: Date, holiday:Boolean, excludedUsers: ju.List[User] = Lists.newArrayList()): TimesheetLock = {
     val lock = optionalName match {
-      case Some(name) => new TimesheetLock(startDate, endDate, name, excludedUsers)
-      case None => new TimesheetLock(startDate, endDate, excludedUsers)
+      case Some(name) => new TimesheetLock(startDate, endDate, name, holiday, excludedUsers)
+      case None => new TimesheetLock(startDate, endDate, holiday, excludedUsers)
     }
 
     lockDao.persist(lock)
@@ -77,8 +77,8 @@ class TimesheetLockServiceSpringImpl @Autowired()(lockDao: TimesheetLockDao, tim
   }
 
   @Transactional
-  override def updateExisting(id: Int, startDate: Date, endDate: Date, name: String, excludedUsers: ju.List[User]): TimesheetLock = {
-    val lock = new TimesheetLock(id, startDate, endDate, name, excludedUsers)
+  override def updateExisting(id: Int, startDate: Date, endDate: Date, name: String, holiday:Boolean, excludedUsers: ju.List[User]): TimesheetLock = {
+    val lock = new TimesheetLock(id, startDate, endDate, name, holiday, excludedUsers)
     lockDao.persist(lock)
   }
 

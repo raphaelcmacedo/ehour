@@ -23,7 +23,7 @@ class TimesheetLockServiceSpringImplSpec extends AbstractSpec {
   val endDate = new LocalDate()
   val startDate = new LocalDate()
 
-  val lock = new TimesheetLock(startDate.toDate, endDate.toDate)
+  val lock = new TimesheetLock(startDate.toDate, endDate.toDate, false)
 
   override def beforeEach() {
     reset(lockDao)
@@ -31,13 +31,13 @@ class TimesheetLockServiceSpringImplSpec extends AbstractSpec {
 
   "Timesheet Lock Service" should {
     "create a new lock" in {
-      val timesheet = service.createNew(None, startDate.toDate, endDate.toDate)
+      val timesheet = service.createNew(None, startDate.toDate, endDate.toDate, false)
 
       timesheet.getDateStart should be(startDate.toDate)
     }
 
     "find all" in {
-      val lock2 = new TimesheetLock(startDate.plusDays(1).toDate, endDate.plusDays(2).toDate)
+      val lock2 = new TimesheetLock(startDate.plusDays(1).toDate, endDate.plusDays(2).toDate, false)
 
       when(lockDao.findAll()).thenReturn(Lists.newArrayList(lock, lock2))
 
@@ -122,7 +122,7 @@ class TimesheetLockServiceSpringImplSpec extends AbstractSpec {
       }
 
       "find first 2 days as locked with lock matching requested range" in {
-        val response = Lists.newArrayList(new TimesheetLock(startDate.toDate, startDate.plusDays(2).toDate))
+        val response = Lists.newArrayList(new TimesheetLock(startDate.toDate, startDate.plusDays(2).toDate, false))
         val locked = findLockedDatesInRange(response)
 
         locked should have size 1
@@ -133,7 +133,7 @@ class TimesheetLockServiceSpringImplSpec extends AbstractSpec {
 
 
       "find first 2 days as locked with lock partially overlapping the requested range" in {
-        val response = Lists.newArrayList(new TimesheetLock(startDate.minusDays(2).toDate, startDate.plusDays(2).toDate))
+        val response = Lists.newArrayList(new TimesheetLock(startDate.minusDays(2).toDate, startDate.plusDays(2).toDate, false))
         val locked = findLockedDatesInRange(response)
 
         locked should have size 1
@@ -143,7 +143,7 @@ class TimesheetLockServiceSpringImplSpec extends AbstractSpec {
       }
 
       "find first day as locked when locked abuts the requested range at the start" in {
-        val response = Lists.newArrayList(new TimesheetLock(startDate.minusDays(2).toDate, startDate.toDate))
+        val response = Lists.newArrayList(new TimesheetLock(startDate.minusDays(2).toDate, startDate.toDate, false))
         val locked = findLockedDatesInRange(response)
 
         locked should have size 1
@@ -153,7 +153,7 @@ class TimesheetLockServiceSpringImplSpec extends AbstractSpec {
       }
 
       "find last 2 days as locked with lock matching the requested range" in {
-        val response = Lists.newArrayList(new TimesheetLock(endDate.minusDays(2).toDate, endDate.toDate))
+        val response = Lists.newArrayList(new TimesheetLock(endDate.minusDays(2).toDate, endDate.toDate, false))
         val locked = findLockedDatesInRange(response)
 
         locked should have size 1
@@ -163,7 +163,7 @@ class TimesheetLockServiceSpringImplSpec extends AbstractSpec {
       }
 
       "find last 2 days as locked with lock partially overlapping the requested range" in {
-        val response = Lists.newArrayList(new TimesheetLock(endDate.minusDays(2).toDate, endDate.plusDays(2).toDate))
+        val response = Lists.newArrayList(new TimesheetLock(endDate.minusDays(2).toDate, endDate.plusDays(2).toDate, false))
         val locked = findLockedDatesInRange(response)
 
         locked should have size 1
@@ -173,7 +173,7 @@ class TimesheetLockServiceSpringImplSpec extends AbstractSpec {
       }
 
       "find last day locked as end lock is inclusive" in {
-        val response = Lists.newArrayList(new TimesheetLock(endDate.toDate, endDate.plusDays(1).toDate))
+        val response = Lists.newArrayList(new TimesheetLock(endDate.toDate, endDate.plusDays(1).toDate, false))
         val locked = findLockedDatesInRange(response)
 
         locked should have size 1
@@ -183,7 +183,7 @@ class TimesheetLockServiceSpringImplSpec extends AbstractSpec {
       }
 
       "find first 2 days and last day as locked" in {
-        val response = Lists.newArrayList(new TimesheetLock(startDate.toDate, startDate.plusDays(2).toDate), new TimesheetLock(endDate.minusDays(1).toDate, endDate.toDate))
+        val response = Lists.newArrayList(new TimesheetLock(startDate.toDate, startDate.plusDays(2).toDate, false), new TimesheetLock(endDate.minusDays(1).toDate, endDate.toDate, false))
         val locked = findLockedDatesInRange(response)
 
         locked should have size 2
@@ -196,7 +196,7 @@ class TimesheetLockServiceSpringImplSpec extends AbstractSpec {
       }
 
       "find first start day and last day as locked" in {
-        val response = Lists.newArrayList(new TimesheetLock(startDate.minusDays(2).toDate, startDate.toDate), new TimesheetLock(endDate.toDate, endDate.toDate))
+        val response = Lists.newArrayList(new TimesheetLock(startDate.minusDays(2).toDate, startDate.toDate, false), new TimesheetLock(endDate.toDate, endDate.toDate, false))
         val locked = findLockedDatesInRange(response)
 
         locked should have size 2
@@ -209,7 +209,7 @@ class TimesheetLockServiceSpringImplSpec extends AbstractSpec {
       }
 
       "find first 4 days as locked with locks overlapping eachother" in {
-        val response = Lists.newArrayList(new TimesheetLock(startDate.minusDays(2).toDate, startDate.plusDays(2).toDate), new TimesheetLock(startDate.minusDays(2).toDate, startDate.plusDays(4).toDate))
+        val response = Lists.newArrayList(new TimesheetLock(startDate.minusDays(2).toDate, startDate.plusDays(2).toDate, false), new TimesheetLock(startDate.minusDays(2).toDate, startDate.plusDays(4).toDate, false))
         val locked = findLockedDatesInRange(response)
 
         locked should have size 1
@@ -219,7 +219,7 @@ class TimesheetLockServiceSpringImplSpec extends AbstractSpec {
       }
 
       "find first 4 days as locked with locks abuts eachother" in {
-        val response = Lists.newArrayList(new TimesheetLock(startDate.minusDays(2).toDate, startDate.plusDays(2).toDate), new TimesheetLock(startDate.plusDays(2).toDate, startDate.plusDays(4).toDate))
+        val response = Lists.newArrayList(new TimesheetLock(startDate.minusDays(2).toDate, startDate.plusDays(2).toDate, false), new TimesheetLock(startDate.plusDays(2).toDate, startDate.plusDays(4).toDate, false))
         val locked = findLockedDatesInRange(response)
 
         locked should have size 1
@@ -235,8 +235,8 @@ class TimesheetLockServiceSpringImplSpec extends AbstractSpec {
 
         val start = startDate
         val end = startDate.plusDays(2)
-        val lockA = new TimesheetLock(start.toDate, end.toDate, Lists.newArrayList(userA))
-        val lockB = new TimesheetLock(startDate.toDate, startDate.plusDays(3).toDate, Lists.newArrayList(userB))
+        val lockA = new TimesheetLock(start.toDate, end.toDate, false, Lists.newArrayList(userA))
+        val lockB = new TimesheetLock(startDate.toDate, startDate.plusDays(3).toDate, false, Lists.newArrayList(userB))
         val response = Lists.newArrayList(lockA, lockB)
 
         when(lockDao.findMatchingLock(startDate.toDate, endDate.toDate)).thenReturn(response)
