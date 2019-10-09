@@ -20,11 +20,13 @@ import com.google.common.collect.Lists;
 import net.rrm.ehour.data.DateRange;
 import net.rrm.ehour.domain.Project;
 import net.rrm.ehour.domain.ProjectAssignment;
+import net.rrm.ehour.domain.TimesheetLock;
 import net.rrm.ehour.domain.User;
 import net.rrm.ehour.persistence.project.dao.ProjectAssignmentDao;
 import net.rrm.ehour.persistence.project.dao.ProjectDao;
 import net.rrm.ehour.persistence.report.dao.DetailedReportDao;
 import net.rrm.ehour.persistence.report.dao.ReportAggregatedDao;
+import net.rrm.ehour.persistence.timesheetlock.dao.TimesheetLockDao;
 import net.rrm.ehour.report.criteria.ReportCriteria;
 import net.rrm.ehour.report.reports.ReportData;
 import net.rrm.ehour.report.reports.element.FlatReportElement;
@@ -32,9 +34,12 @@ import net.rrm.ehour.report.reports.element.FlatReportElementBuilder;
 import net.rrm.ehour.report.reports.element.LockableDate;
 import net.rrm.ehour.timesheet.service.TimesheetLockService;
 import net.rrm.ehour.util.DomainUtil;
+import org.joda.time.Instant;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -46,15 +51,17 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
     private static final String CONTRACTOR_CUSTOMER_CODE = "Contractor";
     private DetailedReportDao detailedReportDao;
     private ProjectAssignmentDao projectAssignmentDao;
+    private TimesheetLockDao timesheetLockDao;
 
     DetailedReportServiceImpl() {
     }
 
     @Autowired
-    public DetailedReportServiceImpl(ReportCriteriaService reportCriteriaService, ProjectDao projectDao, TimesheetLockService lockService, DetailedReportDao detailedReportDao, ReportAggregatedDao reportAggregatedDAO, ProjectAssignmentDao projectAssignmentDao) {
+    public DetailedReportServiceImpl(ReportCriteriaService reportCriteriaService, ProjectDao projectDao, TimesheetLockService lockService, DetailedReportDao detailedReportDao, ReportAggregatedDao reportAggregatedDAO, ProjectAssignmentDao projectAssignmentDao, TimesheetLockDao timesheetLockDao) {
         super(reportCriteriaService, projectDao, lockService, reportAggregatedDAO);
         this.detailedReportDao = detailedReportDao;
         this.projectAssignmentDao = projectAssignmentDao;
+        this.timesheetLockDao = timesheetLockDao;
     }
 
     public ReportData getDetailedReportData(ReportCriteria reportCriteria) {
@@ -97,6 +104,7 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
             elements.add(FlatReportElementBuilder.buildFlatReportElement(assignment));
         }
 
+        this.addHolidays(elements, reportRange);
         return elements;
     }
 
@@ -113,6 +121,7 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
             elements = detailedReportDao.getHoursPerDayForProjectsAndUsers(projectIds, userIds, reportRange);
         }
 
+        this.addHolidays(elements, reportRange);
         this.setCustomFields(elements);
         return elements;
     }
@@ -151,5 +160,27 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
 
         }
     }
+
+    private void addHolidays(List<FlatReportElement> elements, DateRange dateRange){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateRange.getDateStart());
+        List<TimesheetLock> locks = timesheetLockDao.listHolidaysByYear(calendar.get(Calendar.YEAR));
+
+        for(TimesheetLock lock:locks){
+            Date current = lock.getDateStart();
+
+            while (current.before(lock.getDateEnd()) || current.equals(lock.getDateEnd())) {
+                FlatReportElement element = new FlatReportElement();
+                element.setDayDate(current);
+                element.setHoliday(true);
+                elements.add(element);
+
+                calendar.setTime(current);
+                calendar.add(Calendar.DATE, 1);
+                current = calendar.getTime();
+            }
+        }
+    }
+
 
 }

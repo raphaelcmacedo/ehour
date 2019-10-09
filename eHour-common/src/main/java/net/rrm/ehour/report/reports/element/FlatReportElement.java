@@ -16,6 +16,7 @@
 
 package net.rrm.ehour.report.reports.element;
 
+import net.rrm.ehour.domain.TimesheetLock;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -53,6 +54,7 @@ public class FlatReportElement implements ProjectStructuredReportElement {
     private Integer displayOrder;
     private LockableDate lockableDate;
     private Boolean emptyEntry;
+    private boolean holiday;
 
     public FlatReportElement() {
     }
@@ -348,6 +350,14 @@ public class FlatReportElement implements ProjectStructuredReportElement {
 
     public String getContractManager() {
         return contractManager;
+    }
+
+    public boolean isHoliday() {
+        return holiday;
+    }
+
+    public void setHoliday(boolean holiday) {
+        this.holiday = holiday;
     }
 
     public void setContractManager(String contractManager) {

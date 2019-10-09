@@ -7,4 +7,9 @@
                  WHERE :startDate <= lock.dateEnd AND
                        :endDate >= lock.dateStart
         ]]></query>
+
+    <query name="TimesheetLock.getHolidaysByYear">
+        <![CDATA[FROM TimesheetLock lock
+                 WHERE holiday = true and YEAR(dateStart) = :year
+        ]]></query>
 </hibernate-mapping>

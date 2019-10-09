@@ -23,11 +23,14 @@ import net.rrm.ehour.ui.common.report.excel.ExcelWorkbook;
 import net.rrm.ehour.ui.common.util.WebUtils;
 import net.rrm.ehour.ui.timesheet.export.TimesheetExportParameter;
 import net.rrm.ehour.ui.timesheet.export.eurodyn.part.*;
+import org.apache.commons.collections.bidimap.TreeBidiMap;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.WorkbookUtil;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created on Mar 23, 2009, 1:30:04 PM
@@ -66,14 +69,11 @@ public class TimesheetExcelExport implements ExcelReport {
 
         int rowNumber = 1;
 
+        Map<String, String> comments = new TreeMap<String, String>();
         rowNumber = new ExportReportHeader(CELL_BORDER, sheet, report, workbook).createPart(rowNumber);
         rowNumber = new ExportReportBodyHeader(CELL_BORDER, sheet, report, workbook).createPart(rowNumber);
-        rowNumber = new ExportReportBody(CELL_BORDER, sheet, report, workbook).createPart(rowNumber);
-        rowNumber = new ExportReportTotal(CELL_BORDER, sheet, report, workbook).createPart(rowNumber);
-
-        if (isInclSignOff(report)) {
-            new ExportReportSignOff(CELL_BORDER, sheet, report, workbook).createPart(rowNumber + 1);
-        }
+        rowNumber = new ExportReportBody(CELL_BORDER, sheet, report, workbook, comments).createPart(rowNumber);
+        rowNumber = new ExportReportTotal(CELL_BORDER, sheet, report, workbook, comments).createPart(rowNumber);
 
         return workbook;
     }

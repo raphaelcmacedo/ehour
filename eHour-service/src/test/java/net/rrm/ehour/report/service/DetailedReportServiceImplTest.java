@@ -23,6 +23,7 @@ import net.rrm.ehour.persistence.project.dao.ProjectAssignmentDao;
 import net.rrm.ehour.persistence.project.dao.ProjectDao;
 import net.rrm.ehour.persistence.report.dao.DetailedReportDao;
 import net.rrm.ehour.persistence.report.dao.ReportAggregatedDao;
+import net.rrm.ehour.persistence.timesheetlock.dao.TimesheetLockDao;
 import net.rrm.ehour.report.criteria.ReportCriteria;
 import net.rrm.ehour.report.criteria.UserSelectedCriteria;
 import net.rrm.ehour.report.reports.ReportData;
@@ -60,6 +61,7 @@ public class DetailedReportServiceImplTest {
     private ProjectDao projectDao;
     private ReportAggregatedDao reportAggregatedDao;
     private ProjectAssignmentDao projectAssignmentDao;
+    private TimesheetLockDao timesheetLockDao;
 
     @Before
     public void setUp() throws Exception {
@@ -78,7 +80,9 @@ public class DetailedReportServiceImplTest {
 
         projectAssignmentDao = mock(ProjectAssignmentDao.class);
 
-        detailedReportService = new DetailedReportServiceImpl(reportCriteriaService, projectDao, timesheetLockService, detailedReportDao, reportAggregatedDao, projectAssignmentDao);
+        timesheetLockDao = mock(TimesheetLockDao.class);
+
+        detailedReportService = new DetailedReportServiceImpl(reportCriteriaService, projectDao, timesheetLockService, detailedReportDao, reportAggregatedDao, projectAssignmentDao, timesheetLockDao);
     }
 
     private void provideNoLocks() {

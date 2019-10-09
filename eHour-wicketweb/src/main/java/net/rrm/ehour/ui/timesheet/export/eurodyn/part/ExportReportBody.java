@@ -32,6 +32,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -43,8 +44,10 @@ public class ExportReportBody extends AbstractExportReportPart {
 
     private static final int ROW_FIRST_MONTH = 12;
     private static final int COLUMN_FIRST_DAY = 1;
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     private Map<Integer, Double> daysWorked = new TreeMap<Integer, Double>();
+    private Map<String, String> comments;
     private Double daysRemaining;
 
     private void initDaysWorked(){
@@ -53,8 +56,9 @@ public class ExportReportBody extends AbstractExportReportPart {
         }
     }
 
-    public ExportReportBody(int cellMargin, Sheet sheet, Report report, ExcelWorkbook workbook) {
+    public ExportReportBody(int cellMargin, Sheet sheet, Report report, ExcelWorkbook workbook, Map<String, String> comments) {
         super(cellMargin, sheet, report, workbook);
+        this.comments = comments;
         initDaysWorked();
     }
 
@@ -88,7 +92,7 @@ public class ExportReportBody extends AbstractExportReportPart {
 
     private void setDataToReport(List<FlatReportElement> elements){
         for (FlatReportElement element : elements){
-            if(!isContractorElement(element) && daysRemaining == null){
+            if(daysRemaining == null && !isContractorElement(element)){
                 daysRemaining = element.getAssignmentDaysAllotted();
             }
 
@@ -99,13 +103,14 @@ public class ExportReportBody extends AbstractExportReportPart {
             CellStyle cellStyle = getDataStyle();
             if(this.isWeekend(calendar)){
                 cellStyle = getWeekendStyle();
-            }else if(element.getLocked() != null && element.getLocked()){
+            }else if(element.isHoliday()){
                 cellStyle = getHolidayStyle();
             }else{
-                text = getTextForReport(element, calendar);
+                text = this.getTextForReport(element, calendar);
             }
 
             this.createCell(calendar, text, cellStyle);
+            this.addComments(element);
         }
     }
 
@@ -164,11 +169,15 @@ public class ExportReportBody extends AbstractExportReportPart {
 
             CellFactory.createCell(row, colNumberDaysRemaining, String.valueOf(daysRemaining), getWorkbook());
             row.getCell(colNumberDaysRemaining).setCellStyle(getDataStyle());
-
-
         }
     }
 
+    private void addComments(FlatReportElement element){
+        if(element.getComment() != null && !element.getComment().isEmpty()){
+            String key = sdf.format(element.getDayDate());
+            comments.put(key, element.getComment());
+        }
+    }
 
 
 }

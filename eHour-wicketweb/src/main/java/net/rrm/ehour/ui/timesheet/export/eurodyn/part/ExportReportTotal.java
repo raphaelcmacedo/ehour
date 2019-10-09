@@ -23,9 +23,13 @@ import net.rrm.ehour.ui.common.report.Report;
 import net.rrm.ehour.ui.common.report.excel.CellFactory;
 import net.rrm.ehour.ui.common.report.excel.ExcelStyle;
 import net.rrm.ehour.ui.common.report.excel.ExcelWorkbook;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.wicket.model.ResourceModel;
+
+import java.util.Map;
 
 /**
  * Created on Mar 25, 2009, 6:40:48 AM
@@ -34,15 +38,25 @@ import org.apache.wicket.model.ResourceModel;
  */
 public class ExportReportTotal extends AbstractExportReportPart
 {
-	public ExportReportTotal(int cellMargin, Sheet sheet, Report report, ExcelWorkbook workbook)
+	private Map<String, String> comments;
+
+	public ExportReportTotal(int cellMargin, Sheet sheet, Report report, ExcelWorkbook workbook, Map<String, String> comments)
 	{
 		super(cellMargin, sheet, report, workbook);
+		this.comments = comments;
 	}
 	
 	@Override
 	public int createPart(int rowNumber)
 	{
 		rowNumber++;
+		rowNumber = this.createFooter(rowNumber);
+		rowNumber = this.createComments(rowNumber);
+
+		return rowNumber;
+	}
+
+	private int createFooter(int rowNumber){
 		Row row = getSheet().createRow(rowNumber++);
 
 		CellFactory.createCell(row, 3, "", getWorkbook());
@@ -87,31 +101,34 @@ public class ExportReportTotal extends AbstractExportReportPart
 		return rowNumber;
 	}
 
-	private void addTotalValue(float total, Row row) {
-        CellFactory.createCell(row, getCellMargin() + 6, total, getWorkbook(), ExcelStyle.DIGIT_BOLD_BORDER_NORTH);
+	private int createComments(int rowNumber){
+		Row row = getSheet().createRow(++rowNumber);
+
+		this.createMergedCell(row, 3, 33, "Comments", true);
+
+		for(String date : comments.keySet()){
+			row = getSheet().createRow(++rowNumber);
+
+            this.createMergedCell(row, 3, 6, date, false);
+            this.createMergedCell(row, 7, 33, comments.get(date), false);
+		}
+
+		return rowNumber;
+	}
+
+    private void createMergedCell(Row row, int firstColumn, int lastColumn, String text, boolean header){
+        CellFactory.createCell(row, firstColumn, text, getWorkbook());
+        CellRangeAddress cellRangeAddress = new CellRangeAddress(row.getRowNum(),row.getRowNum(),firstColumn,lastColumn);
+        getSheet().addMergedRegion(cellRangeAddress);
+
+        if(header){
+			setTitleBorders(cellRangeAddress);
+			row.getCell(firstColumn).setCellStyle(getTitleStyle());
+		}else{
+			setDataBorders(cellRangeAddress);
+			row.getCell(firstColumn).setCellStyle(getDataStyle());
+		}
+
     }
 
-    private void addTotalLabel(Row row)
-	{
-		CellFactory.createCell(row, getCellMargin(), new ResourceModel("excelMonth.total"), getWorkbook(), ExcelStyle.BOLD_BORDER_NORTH);
-	}
-	
-	private float getTotal()
-	{
-		float total = 0; 
-		
-		ReportData reportData = getReport().getReportData();
-		
-		for (ReportElement reportElement : reportData.getReportElements())
-		{
-			FlatReportElement flat = (FlatReportElement)reportElement;
-			
-			if (flat.getTotalHours() != null)
-			{
-				total += flat.getTotalHours().floatValue();
-			}
-		}
-		
-		return total;
-	}
 }
