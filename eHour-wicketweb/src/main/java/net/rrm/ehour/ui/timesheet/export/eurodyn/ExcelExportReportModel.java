@@ -114,11 +114,13 @@ public class ExcelExportReportModel extends AbstractReportModel {
             }
 
             aggregateDate = getValidAggregateDate(aggregate);
-            aggregateDate = DateUtil.nullifyTime(aggregateDate);
 
-            rowAggregates.put(aggregateDate, aggregate);
+            if(aggregateDate != null){
+                aggregateDate = DateUtil.nullifyTime(aggregateDate);
+                rowAggregates.put(aggregateDate, aggregate);
 
-            rowMap.put(rowKey, rowAggregates);
+                rowMap.put(rowKey, rowAggregates);
+            }
         }
 
         return aggregateData;

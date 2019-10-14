@@ -68,18 +68,24 @@ public class ExportReportBody extends AbstractExportReportPart {
 
         Row row = getSheet().getRow(rowNumber);
 
-        String currentText = row.getCell(colNumber).getStringCellValue();
-        if(NumberUtils.isNumber(currentText)){//If the cell already contains numbers don't replace it
+        if(row.getCell(colNumber).getCellType() == Cell.CELL_TYPE_NUMERIC){//If the cell already contains numbers don't replace it
             return;
         }
 
-        CellFactory.createCell(row, colNumber, text, getWorkbook());
+        if(NumberUtils.isNumber(text)){
+            row.createCell(colNumber).setCellValue(Double.parseDouble(text));
+            row.getCell(colNumber).setCellType(Cell.CELL_TYPE_NUMERIC);
+            cellStyle = getDecimalStyle();
+        }else{
+            CellFactory.createCell(row, colNumber, text, getWorkbook());
+        }
         row.getCell(colNumber).setCellStyle(cellStyle);
     }
 
     @Override
     public int createPart(int rowNumber) {
         markAllWeekends();
+        markAllNonExistentDays();
 
         List<FlatReportElement> elements = (List<FlatReportElement>) getReport().getReportData().getReportElements();
         List<Date> dateSequence = DateUtil.createDateSequence(getReport().getReportRange(), getConfig());
@@ -94,6 +100,10 @@ public class ExportReportBody extends AbstractExportReportPart {
         for (FlatReportElement element : elements){
             if(daysRemaining == null && !isContractorElement(element)){
                 daysRemaining = element.getAssignmentDaysAllotted();
+            }
+
+            if(element.isEmptyEntry()){
+                continue;
             }
 
             Calendar calendar = Calendar.getInstance();
@@ -151,6 +161,37 @@ public class ExportReportBody extends AbstractExportReportPart {
             }
             calendar.add(Calendar.DATE,1);
         }
+    }
+
+    private void markAllNonExistentDays(){
+        List<int[]> nonExistentDays = new ArrayList<>();
+
+        if(!isLeapYear()){
+            nonExistentDays.add(new int[]{1,29});
+            nonExistentDays.add(new int[]{1,30});
+        }
+
+        nonExistentDays.add(new int[]{1,31});
+        nonExistentDays.add(new int[]{3,31});
+        nonExistentDays.add(new int[]{5,31});
+        nonExistentDays.add(new int[]{8,31});
+        nonExistentDays.add(new int[]{10,31});
+
+        for(int[] day : nonExistentDays){
+            int rowNumber = day[0] + ROW_FIRST_MONTH;
+            int colNumber = day[1] + COLUMN_FIRST_DAY;
+
+            Row row = getSheet().getRow(rowNumber);
+
+            CellFactory.createCell(row, colNumber, "", getWorkbook());
+            row.getCell(colNumber).setCellStyle(getBlackBoxStyle());
+        }
+    }
+
+    private static boolean isLeapYear() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        return cal.getActualMaximum(Calendar.DAY_OF_YEAR) > 365;
     }
 
     private void writeSubtotals(){

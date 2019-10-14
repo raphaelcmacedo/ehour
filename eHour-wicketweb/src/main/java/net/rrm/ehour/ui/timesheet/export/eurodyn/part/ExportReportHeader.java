@@ -35,7 +35,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 
 public class ExportReportHeader extends AbstractExportReportPart
@@ -48,7 +50,7 @@ public class ExportReportHeader extends AbstractExportReportPart
     private static final int CONSULTANT_SIGNATURE_COLUMN = 12;
     private static final int DG_COLUMN = 19;
     private static final int SECTION_LEADER_COLUMN = 24;
-    private static final int DATE_COLUMN = 35;
+    private static final int DATE_COLUMN = 34;
     private static final int COMPANY_SIGNATURE_COLUMN = 5;
     private static final int HEAD_OF_UNIT_COLUMN = 24;
     private static final int CONSULTANT_ADDRESS_COLUMN = 1;
@@ -57,8 +59,12 @@ public class ExportReportHeader extends AbstractExportReportPart
     private static final int CONTRACT_COLUMN = 18;
     private static final int END_DATE_COLUMN = 21;
     private static final int NUMBER_OF_DAYS_COLUMN = 28;
-    private static final int PROJECT_COLUMN = 35;
+    private static final int PROJECT_COLUMN = 34;
 
+    private static final SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+    private static final short TITLE_HEIGHT = (short) 500;
+    private static final short DATA_HEIGHT = (short) 450;
+    private static final short LINE_HEIGHT = (short) 100;
 
     public ExportReportHeader(int cellMargin, Sheet sheet, Report report, ExcelWorkbook workbook)
     {
@@ -139,14 +145,14 @@ public class ExportReportHeader extends AbstractExportReportPart
     private int addFirstTitleRow(int rowNumber)
     {
         Row row = getSheet().createRow(rowNumber++);
-        row.setHeight((short)500);
+        row.setHeight(TITLE_HEIGHT);
 
         this.createTitle(row, CONSULTANT_COLUMN, COMPANY_COLUMN-2, "Name and first name of consultant");
         this.createTitle(row, COMPANY_COLUMN, CONSULTANT_SIGNATURE_COLUMN-2, "Name of company");
         this.createTitle(row, CONSULTANT_SIGNATURE_COLUMN, DG_COLUMN-2, "Signature of consultant");
         this.createTitle(row, DG_COLUMN, SECTION_LEADER_COLUMN-2, "DG Unit");
         this.createTitle(row, SECTION_LEADER_COLUMN, DATE_COLUMN-2, "In agreement (operational initiation) Name and Signature");
-        this.createTitle(row, DATE_COLUMN, DATE_COLUMN+2, "Date");
+        this.createTitle(row, DATE_COLUMN, DATE_COLUMN+1, "Date");
 
         return rowNumber;
     }
@@ -154,27 +160,28 @@ public class ExportReportHeader extends AbstractExportReportPart
     private int addFirstTitleDataRow(int rowNumber, FlatReportElement data)
     {
         Row row = getSheet().createRow(rowNumber++);
-        row.setHeight((short)600);
+        row.setHeight(DATA_HEIGHT);
 
         this.createData(row, CONSULTANT_COLUMN, COMPANY_COLUMN-2, data.getUserLastName() + ", " + data.getUserFirstName());
         this.createData(row, COMPANY_COLUMN, CONSULTANT_SIGNATURE_COLUMN-2, "European Dynamics Consortium");
         this.createData(row, CONSULTANT_SIGNATURE_COLUMN, DG_COLUMN-2, "");
-        this.createData(row, DG_COLUMN, SECTION_LEADER_COLUMN-2, data.getCustomerCode() + " - " + data.getCustomerName());
+        String dg = data.getCustomerName().replace("EC-TAXUD - ", "");
+        this.createData(row, DG_COLUMN, SECTION_LEADER_COLUMN-2, dg);
         this.createData(row, SECTION_LEADER_COLUMN, DATE_COLUMN-2, data.getSectionLeader());
-        this.createData(row, DATE_COLUMN, DATE_COLUMN+2, "");
+        this.createData(row, DATE_COLUMN, DATE_COLUMN+1, df.format(new Date()));
 
         return rowNumber;
     }
 
     private int addSecondTitleRow(int rowNumber) {
     Row row = getSheet().createRow(rowNumber++);
-    row.setHeight((short)100);
+    row.setHeight(LINE_HEIGHT);
 
     row = getSheet().createRow(rowNumber++);
-    row.setHeight((short)500);
+    row.setHeight(TITLE_HEIGHT);
 
     this.createTitle(row, COMPANY_SIGNATURE_COLUMN, HEAD_OF_UNIT_COLUMN-2, "Signature of company");
-    this.createTitle(row, HEAD_OF_UNIT_COLUMN, HEAD_OF_UNIT_COLUMN+8, "Commission \"Conforme aux faits\"                 Name and Signature");
+    this.createTitle(row, HEAD_OF_UNIT_COLUMN, HEAD_OF_UNIT_COLUMN+8, "Commission \"Conforme aux faits\" Name and Signature");
 
     return rowNumber;
 }
@@ -182,7 +189,7 @@ public class ExportReportHeader extends AbstractExportReportPart
     private int addSecondTitleDataRow(int rowNumber, FlatReportElement data)
     {
         Row row = getSheet().createRow(rowNumber++);
-        row.setHeight((short)600);
+        row.setHeight(DATA_HEIGHT);
 
         this.createData(row, COMPANY_SIGNATURE_COLUMN, HEAD_OF_UNIT_COLUMN-2, "" );
         this.createData(row, HEAD_OF_UNIT_COLUMN, HEAD_OF_UNIT_COLUMN+8, data.getHeadOfUnit() );
@@ -193,18 +200,18 @@ public class ExportReportHeader extends AbstractExportReportPart
     private int addThirdTitleRow(int rowNumber)
     {
         Row row = getSheet().createRow(rowNumber++);
-        row.setHeight((short)100);
+        row.setHeight(LINE_HEIGHT);
 
         row = getSheet().createRow(rowNumber++);
-        row.setHeight((short)500);
+        row.setHeight(TITLE_HEIGHT);
 
         this.createTitle(row, CONSULTANT_ADDRESS_COLUMN, TEL_COLUMN-2, "Internal address of consultant");
         this.createTitle(row, TEL_COLUMN, FRAMEWORK_COLUMN-2, "Tel.");
         this.createTitle(row, FRAMEWORK_COLUMN, CONTRACT_COLUMN-1, "Framework Contract");
         this.createTitle(row, CONTRACT_COLUMN, END_DATE_COLUMN-1, "Specific Contract");
         this.createTitle(row, END_DATE_COLUMN, NUMBER_OF_DAYS_COLUMN-2, "End date for services in SC");
-        this.createTitle(row, NUMBER_OF_DAYS_COLUMN, PROJECT_COLUMN-2, "Number of days of Specific Contract");
-        this.createTitle(row, PROJECT_COLUMN, PROJECT_COLUMN+2, "Project");
+        this.createTitle(row, NUMBER_OF_DAYS_COLUMN, PROJECT_COLUMN-2, "Num. of days of Specific Contract");
+        this.createTitle(row, PROJECT_COLUMN, PROJECT_COLUMN+1, "Project");
 
         return rowNumber;
     }
@@ -212,15 +219,20 @@ public class ExportReportHeader extends AbstractExportReportPart
     private int addThirdTitleDataRow(int rowNumber, FlatReportElement data)
     {
         Row row = getSheet().createRow(rowNumber++);
-        row.setHeight((short)600);
+        row.setHeight(DATA_HEIGHT);
 
         this.createData(row, CONSULTANT_ADDRESS_COLUMN, TEL_COLUMN-2, "" );
         this.createData(row, TEL_COLUMN, FRAMEWORK_COLUMN+-2, "" );
-        this.createData(row, FRAMEWORK_COLUMN, CONTRACT_COLUMN-1, "" );
-        this.createData(row, CONTRACT_COLUMN, END_DATE_COLUMN-1, "" );
+        this.createData(row, FRAMEWORK_COLUMN, CONTRACT_COLUMN-1, data.getProjectCode() );
+        String specificContract = data.getProjectName().replace("SC","");
+        int index = specificContract.indexOf("-");
+        if(index > 0){
+            specificContract = specificContract.substring(0, index);
+        }
+        this.createData(row, CONTRACT_COLUMN, END_DATE_COLUMN-1, specificContract );
         this.createData(row, END_DATE_COLUMN, NUMBER_OF_DAYS_COLUMN-2, "" );
         this.createData(row, NUMBER_OF_DAYS_COLUMN, PROJECT_COLUMN-2, data.getAssignmentDaysAllotted().toString());
-        this.createData(row, PROJECT_COLUMN, PROJECT_COLUMN+2, data.getProjectCode() + " - " + data.getProjectName() );
+        this.createData(row, PROJECT_COLUMN, PROJECT_COLUMN+1, data.getProjectName() );
 
         return rowNumber;
     }

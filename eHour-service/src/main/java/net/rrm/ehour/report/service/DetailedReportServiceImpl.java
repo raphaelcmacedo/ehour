@@ -84,7 +84,7 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
             element.setLockableDate(new LockableDate(date, lockedDates.contains(date)));
         }
 
-        if (showZeroBookings) {
+        if (showZeroBookings || elements.isEmpty()) {
             List<FlatReportElement> reportElementsForAssignmentsWithoutBookings = getReportElementsForAssignmentsWithoutBookings(reportRange, userIds, projectIds);
 
             reportElementsForAssignmentsWithoutBookings.addAll(elements);
@@ -130,7 +130,7 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
         if(elements != null && !elements.isEmpty()){
             Integer projectAssignmentId = null;
             for(FlatReportElement element:elements){
-                if(!element.getCustomerCode().equals(CONTRACTOR_CUSTOMER_CODE)){
+                if(element.getCustomerCode() != null && !element.getCustomerCode().equals(CONTRACTOR_CUSTOMER_CODE)){
                     projectAssignmentId = element.getAssignmentId();
                     break;
                 }

@@ -74,6 +74,8 @@ public class UserSelectedCriteria implements Serializable {
         infiniteEndDate = false;
 
         reportRange = DateUtil.getDateRangeForMonth(new GregorianCalendar());
+
+        this.setStartDateAsFirstDay();
     }
 
     public final void resetCustomerSelection() {
@@ -185,7 +187,7 @@ public class UserSelectedCriteria implements Serializable {
      * No customers selected ?
      */
     public boolean isEmptyCustomers() {
-        return customers == null || !customers.isEmpty();
+        return customers == null || customers.isEmpty();
     }
 
     /**
@@ -193,7 +195,7 @@ public class UserSelectedCriteria implements Serializable {
      */
 
     public boolean isEmptyProjects() {
-        return projects == null || !projects.isEmpty();
+        return projects == null || projects.isEmpty();
     }
 
     /**
@@ -201,14 +203,14 @@ public class UserSelectedCriteria implements Serializable {
      */
 
     public boolean isEmptyDepartments() {
-        return userDepartments == null || !userDepartments.isEmpty();
+        return userDepartments == null || userDepartments.isEmpty();
     }
 
     /**
      * No users selected ?
      */
     public boolean isEmptyUsers() {
-        return users == null || !users.isEmpty();
+        return users == null || users.isEmpty();
     }
 
     public boolean isOnlyActiveCustomers() {
@@ -233,8 +235,17 @@ public class UserSelectedCriteria implements Serializable {
 
     public UserSelectedCriteria setReportRange(DateRange reportRange) {
         this.reportRange = reportRange;
+        this.setStartDateAsFirstDay();
 
         return this;
+    }
+
+    public void setStartDateAsFirstDay(){
+        //Set the start date as the first day of the year
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.set(calendar.get(Calendar.YEAR), 0, 1);
+        reportRange.setDateStart(calendar.getTime());
     }
 
     public boolean isOnlyActiveUsers() {
@@ -349,4 +360,5 @@ public class UserSelectedCriteria implements Serializable {
     public void setAggregateBy(AggregateBy aggregateBy) {
         this.aggregateBy = aggregateBy;
     }
+
 }

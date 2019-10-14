@@ -51,8 +51,10 @@ public abstract class AbstractExportReportPart
 
 	private CellStyle titleStyle;
 	private CellStyle dataStyle;
+	private CellStyle decimalStyle;
 	private CellStyle weekendStyle;
 	private CellStyle holidayStyle;
+	private CellStyle blackBoxStyle;
 	private CellStyle footerStyle;
 	private CellStyle footerBorderStyle;
 
@@ -90,9 +92,8 @@ public abstract class AbstractExportReportPart
 		Font cellFontTtile = workbook.getWorkbook().createFont();
 		cellFontTtile.setBoldweight(Font.BOLDWEIGHT_BOLD);
 		cellFontTtile.setFontName("Arial");
-		cellFontTtile.setFontHeightInPoints((short)10);
+		cellFontTtile.setFontHeightInPoints((short)8);
 		titleStyle.setFont(cellFontTtile);
-
 
 		dataStyle = workbook.getWorkbook().createCellStyle();
 		dataStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
@@ -102,8 +103,17 @@ public abstract class AbstractExportReportPart
 
 		Font cellFontData = workbook.getWorkbook().createFont();
 		cellFontData.setFontName("Arial");
-		cellFontData.setFontHeightInPoints((short)9);
+		cellFontData.setFontHeightInPoints((short)8);
 		dataStyle.setFont(cellFontData);
+
+		decimalStyle = workbook.getWorkbook().createCellStyle();
+		decimalStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		decimalStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		decimalStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		decimalStyle.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
+		decimalStyle.setFont(cellFontData);
+		String pattern = "0.0";
+		decimalStyle.setDataFormat(workbook.getWorkbook().createDataFormat().getFormat(pattern));
 
 		weekendStyle = workbook.getWorkbook().createCellStyle();
 		weekendStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
@@ -122,6 +132,15 @@ public abstract class AbstractExportReportPart
 		holidayStyle.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
 		holidayStyle.setFillForegroundColor(IndexedColors.LIGHT_ORANGE.index);
 		holidayStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+
+		blackBoxStyle = workbook.getWorkbook().createCellStyle();
+		blackBoxStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
+		blackBoxStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		blackBoxStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		blackBoxStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		blackBoxStyle.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
+		blackBoxStyle.setFillForegroundColor(IndexedColors.BLACK.index);
+		blackBoxStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
 		footerStyle = workbook.getWorkbook().createCellStyle();
 		Font footerFont = workbook.getWorkbook().createFont();
@@ -194,12 +213,20 @@ public abstract class AbstractExportReportPart
 		return dataStyle;
 	}
 
+	protected CellStyle getDecimalStyle() {
+		return decimalStyle;
+	}
+
 	protected CellStyle getWeekendStyle() {
 		return weekendStyle;
 	}
 
 	protected CellStyle getHolidayStyle() {
 		return holidayStyle;
+	}
+
+	protected CellStyle getBlackBoxStyle() {
+		return blackBoxStyle;
 	}
 
 	protected CellStyle getFooterStyle() {

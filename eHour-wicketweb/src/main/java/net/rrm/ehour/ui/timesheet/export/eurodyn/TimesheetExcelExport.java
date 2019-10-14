@@ -24,6 +24,7 @@ import net.rrm.ehour.ui.common.util.WebUtils;
 import net.rrm.ehour.ui.timesheet.export.TimesheetExportParameter;
 import net.rrm.ehour.ui.timesheet.export.eurodyn.part.*;
 import org.apache.commons.collections.bidimap.TreeBidiMap;
+import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.WorkbookUtil;
 
@@ -58,14 +59,20 @@ public class TimesheetExcelExport implements ExcelReport {
     private ExcelWorkbook createWorkbook(Report report) {
         ExcelWorkbook workbook = new ExcelWorkbook();
 
-        String sheetName = WebUtils.formatDate("MMMM yyyy", report.getReportRange().getDateStart());
+        String sheetName = WebUtils.formatDate("yyyy", report.getReportRange().getDateStart());
         Sheet sheet = workbook.createSheet(WorkbookUtil.createSafeSheetName(sheetName));
+        sheet.getPrintSetup().setLandscape(true);
+        sheet.getPrintSetup().setPaperSize(PrintSetup.A4_PAPERSIZE);
 
         sheet.setColumnWidth(0, 333);
-        sheet.setColumnWidth(1, 4000);
+        sheet.setColumnWidth(1, 3300);
         for(int i = 2; i < 33; i++){
-            sheet.setColumnWidth(i, 900);
+            sheet.setColumnWidth(i, 700);
         }
+
+        sheet.setColumnWidth(33, 2000);
+        sheet.setColumnWidth(34, 2500);
+        sheet.setColumnWidth(35, 4000);
 
         int rowNumber = 1;
 
