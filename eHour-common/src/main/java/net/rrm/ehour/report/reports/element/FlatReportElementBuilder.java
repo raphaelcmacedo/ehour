@@ -14,6 +14,8 @@ public class FlatReportElementBuilder {
 
         element.setAssignmentId(assignment.getAssignmentId());
         element.setRole(assignment.getRole());
+        element.setInternalAddress(assignment.getInternalAddress());
+        element.setTelephone(assignment.getTelephone());
         if(assignment.getAllottedHours() != null && assignment.getAllottedHours() > 0){
             double daysAlloted = assignment.getAllottedHours() / 8;
             element.setAssignmentDaysAllotted(daysAlloted);

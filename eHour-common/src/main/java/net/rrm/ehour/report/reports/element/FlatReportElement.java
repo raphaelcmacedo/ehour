@@ -55,6 +55,8 @@ public class FlatReportElement implements ProjectStructuredReportElement {
     private LockableDate lockableDate;
     private Boolean emptyEntry;
     private boolean holiday;
+    private String internalAddress;
+    private String telephone;
 
     public FlatReportElement() {
     }
@@ -440,5 +442,21 @@ public class FlatReportElement implements ProjectStructuredReportElement {
      */
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
+    }
+
+    public String getInternalAddress() {
+        return internalAddress;
+    }
+
+    public void setInternalAddress(String internalAddress) {
+        this.internalAddress = internalAddress;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
 }

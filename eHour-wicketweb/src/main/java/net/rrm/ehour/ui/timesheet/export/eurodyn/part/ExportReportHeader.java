@@ -221,8 +221,8 @@ public class ExportReportHeader extends AbstractExportReportPart
         Row row = getSheet().createRow(rowNumber++);
         row.setHeight(DATA_HEIGHT);
 
-        this.createData(row, CONSULTANT_ADDRESS_COLUMN, TEL_COLUMN-2, "" );
-        this.createData(row, TEL_COLUMN, FRAMEWORK_COLUMN+-2, "" );
+        this.createData(row, CONSULTANT_ADDRESS_COLUMN, TEL_COLUMN-2, data.getInternalAddress() );
+        this.createData(row, TEL_COLUMN, FRAMEWORK_COLUMN+-2, data.getTelephone() );
         this.createData(row, FRAMEWORK_COLUMN, CONTRACT_COLUMN-1, data.getProjectCode() );
         String specificContract = data.getProjectName().replace("SC","");
         int index = specificContract.indexOf("-");

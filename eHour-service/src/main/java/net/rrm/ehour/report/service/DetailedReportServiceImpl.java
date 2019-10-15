@@ -147,6 +147,8 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
                 headOfUnit = assignment.getProject().getHeadOfUnit().getFullName();
             }
 
+            String internalAddress = assignment.getInternalAddress();
+            String telephone = assignment.getTelephone();
             double allottedDays = 0.0;
             if(assignment.getAllottedHours() > 0){
                 allottedDays = assignment.getAllottedHours() / 8;
@@ -156,6 +158,8 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
                 element.setSectionLeader(sectionLeader);
                 element.setHeadOfUnit(headOfUnit);
                 element.setAssignmentDaysAllotted(allottedDays);
+                element.setInternalAddress(internalAddress);
+                element.setTelephone(telephone);
             }
 
         }
