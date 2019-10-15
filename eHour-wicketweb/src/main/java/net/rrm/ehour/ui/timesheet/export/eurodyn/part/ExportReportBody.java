@@ -206,10 +206,10 @@ public class ExportReportBody extends AbstractExportReportPart {
             daysRemaining -= days;
 
             CellFactory.createCell(row, colNumberDaysWorked, String.valueOf(days), getWorkbook());
-            row.getCell(colNumberDaysWorked).setCellStyle(getDataStyle());
+            row.getCell(colNumberDaysWorked).setCellStyle(getSubtotalStyle());
 
             CellFactory.createCell(row, colNumberDaysRemaining, String.valueOf(daysRemaining), getWorkbook());
-            row.getCell(colNumberDaysRemaining).setCellStyle(getDataStyle());
+            row.getCell(colNumberDaysRemaining).setCellStyle(getSubtotalStyle());
         }
     }
 

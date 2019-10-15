@@ -24,6 +24,7 @@ import net.rrm.ehour.ui.common.report.excel.ExcelStyle;
 import net.rrm.ehour.ui.common.report.excel.ExcelWorkbook;
 import net.rrm.ehour.ui.common.session.EhourWebSession;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
@@ -52,6 +53,7 @@ public abstract class AbstractExportReportPart
 	private CellStyle titleStyle;
 	private CellStyle dataStyle;
 	private CellStyle decimalStyle;
+	private CellStyle subtotalStyle;
 	private CellStyle weekendStyle;
 	private CellStyle holidayStyle;
 	private CellStyle blackBoxStyle;
@@ -115,6 +117,19 @@ public abstract class AbstractExportReportPart
 		String pattern = "0.0";
 		decimalStyle.setDataFormat(workbook.getWorkbook().createDataFormat().getFormat(pattern));
 
+		Font cellFontSubtotal = workbook.getWorkbook().createFont();
+		cellFontSubtotal.setFontName("Arial");
+		cellFontSubtotal.setFontHeightInPoints((short)8);
+		cellFontSubtotal.setColor(HSSFColor.BLUE.index);
+
+		subtotalStyle = workbook.getWorkbook().createCellStyle();
+		subtotalStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		subtotalStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		subtotalStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		subtotalStyle.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
+		subtotalStyle.setFont(cellFontSubtotal);
+		subtotalStyle.setDataFormat(workbook.getWorkbook().createDataFormat().getFormat(pattern));
+
 		weekendStyle = workbook.getWorkbook().createCellStyle();
 		weekendStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);
 		weekendStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
@@ -130,7 +145,7 @@ public abstract class AbstractExportReportPart
 		holidayStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
 		holidayStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
 		holidayStyle.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
-		holidayStyle.setFillForegroundColor(IndexedColors.LIGHT_ORANGE.index);
+		holidayStyle.setFillForegroundColor(IndexedColors.ROSE.index);
 		holidayStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
 		blackBoxStyle = workbook.getWorkbook().createCellStyle();
@@ -235,6 +250,10 @@ public abstract class AbstractExportReportPart
 
 	protected CellStyle getFooterBorderStyle() {
 		return footerBorderStyle;
+	}
+
+	protected CellStyle getSubtotalStyle() {
+		return subtotalStyle;
 	}
 
 	protected void createEmptyCells(Row row, ExcelStyle excelStyle)

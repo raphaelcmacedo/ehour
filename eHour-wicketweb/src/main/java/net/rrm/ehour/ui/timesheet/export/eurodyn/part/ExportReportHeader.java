@@ -136,8 +136,14 @@ public class ExportReportHeader extends AbstractExportReportPart
         cellFont.setFontHeightInPoints((short)10);
         cellStyle.setFont(cellFont);
 
-        CellRangeAddress cellRangeAddress = this.createCell(row, DG_COLUMN, DG_COLUMN + 3, String.valueOf(calendar.get(Calendar.YEAR)));
+        this.createCell(row, CONSULTANT_COLUMN, CONSULTANT_COLUMN + 5, "TIMEA3 Model time-sheet");
+        row.getCell(CONSULTANT_COLUMN).setCellStyle(cellStyle);
+
+        this.createCell(row, DG_COLUMN, DG_COLUMN + 3, String.valueOf(calendar.get(Calendar.YEAR)));
         row.getCell(DG_COLUMN).setCellStyle(cellStyle);
+
+        this.createCell(row, DATE_COLUMN, DATE_COLUMN + 1, "TIME SHEET");
+        row.getCell(DATE_COLUMN).setCellStyle(cellStyle);
 
         return ++rowNumber;
     }
@@ -222,7 +228,7 @@ public class ExportReportHeader extends AbstractExportReportPart
         row.setHeight(DATA_HEIGHT);
 
         this.createData(row, CONSULTANT_ADDRESS_COLUMN, TEL_COLUMN-2, data.getInternalAddress() );
-        this.createData(row, TEL_COLUMN, FRAMEWORK_COLUMN+-2, data.getTelephone() );
+        this.createData(row, TEL_COLUMN, FRAMEWORK_COLUMN-2, data.getTelephone() );
         this.createData(row, FRAMEWORK_COLUMN, CONTRACT_COLUMN-1, data.getProjectCode() );
         String specificContract = data.getProjectName().replace("SC","");
         int index = specificContract.indexOf("-");
