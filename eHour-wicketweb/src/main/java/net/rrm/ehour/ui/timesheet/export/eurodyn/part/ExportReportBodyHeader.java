@@ -31,7 +31,6 @@ import org.apache.wicket.model.ResourceModel;
  */
 public class ExportReportBodyHeader extends AbstractExportReportPart
 {
-
 	private int maxColumns = 0;
 	public ExportReportBodyHeader(int cellMargin, Sheet sheet, Report report, ExcelWorkbook workbook)
 	{
@@ -90,6 +89,7 @@ public class ExportReportBodyHeader extends AbstractExportReportPart
 		for(String month:months){
 			int column = 1;
 		    Row row = getSheet().createRow(rowNumber++);
+		    row.setHeightInPoints(ROW_HEIGHT);
 			this.createCell(row, column++, month);
 
 			//Empty cells for the days of the month

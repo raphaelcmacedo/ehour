@@ -58,6 +58,7 @@ public class ExportReportTotal extends AbstractExportReportPart
 
 	private int createFooter(int rowNumber){
 		Row row = getSheet().createRow(rowNumber++);
+		row.setHeightInPoints(ROW_HEIGHT);
 
 		CellFactory.createCell(row, 3, "", getWorkbook());
 		row.getCell(3).setCellStyle(getWeekendStyle());
@@ -73,10 +74,7 @@ public class ExportReportTotal extends AbstractExportReportPart
 		row.getCell(23).setCellStyle(getFooterStyle());
 
 		row = getSheet().createRow(rowNumber++);
-		CellFactory.createCell(row, 23, "Half working day = 0.5", getWorkbook());
-		row.getCell(23).setCellStyle(getFooterStyle());
-
-		row = getSheet().createRow(rowNumber++);
+		row.setHeightInPoints(ROW_HEIGHT);
 
 		CellFactory.createCell(row, 3, "V", getWorkbook());
 		row.getCell(3).setCellStyle(getFooterBorderStyle());
@@ -98,19 +96,26 @@ public class ExportReportTotal extends AbstractExportReportPart
 		CellFactory.createCell(row, 16, "Take-Over", getWorkbook());
 		row.getCell(16).setCellStyle(getFooterStyle());
 
+		CellFactory.createCell(row, 23, "Half working day = 0.5", getWorkbook());
+		row.getCell(23).setCellStyle(getFooterStyle());
+
 		return rowNumber;
 	}
 
 	private int createComments(int rowNumber){
 		Row row = getSheet().createRow(++rowNumber);
+		row.setHeightInPoints(ROW_HEIGHT);
 
-		this.createMergedCell(row, 3, 33, "Comments", true);
+		if(!comments.isEmpty()){
+			this.createMergedCell(row, 3, 33, "Comments", true);
 
-		for(String date : comments.keySet()){
-			row = getSheet().createRow(++rowNumber);
+			for(String date : comments.keySet()){
+				row = getSheet().createRow(++rowNumber);
+				row.setHeightInPoints(ROW_HEIGHT);
 
-            this.createMergedCell(row, 3, 6, date, false);
-            this.createMergedCell(row, 7, 33, comments.get(date), false);
+				this.createMergedCell(row, 3, 6, date, false);
+				this.createMergedCell(row, 7, 33, comments.get(date), false);
+			}
 		}
 
 		return rowNumber;

@@ -116,6 +116,9 @@ public class ExportReportHeader extends AbstractExportReportPart
     }
 
     private void createData(Row row, int firstColumn, int lastColumn, String text){
+        if(text == null){
+            text = "";
+        }
         CellRangeAddress cellRangeAddress = this.createCell(row, firstColumn, lastColumn, text);
         setDataBorders(cellRangeAddress);
         row.getCell(firstColumn).setCellStyle(getDataStyle());
