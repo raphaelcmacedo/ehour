@@ -42,7 +42,7 @@ import java.util.TreeMap;
 public abstract class AbstractExportReportPart
 {
     protected static final String CONTRACTOR_CUSTOMER = "Contractor";
-	protected static final int ROW_HEIGHT = 20;
+	protected static final int ROW_HEIGHT = 12;
 
 	private int cellMargin;
 	private EhourConfig config;

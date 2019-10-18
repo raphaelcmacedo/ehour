@@ -67,12 +67,12 @@ public class TimesheetExcelExport implements ExcelReport {
         sheet.setColumnWidth(0, 333);
         sheet.setColumnWidth(1, 3300);
         for(int i = 2; i < 33; i++){
-            sheet.setColumnWidth(i, 700);
+            sheet.setColumnWidth(i, 730);
         }
 
-        sheet.setColumnWidth(33, 2000);
-        sheet.setColumnWidth(34, 2200);
-        sheet.setColumnWidth(35, 3000);
+        sheet.setColumnWidth(33, 2100);
+        sheet.setColumnWidth(34, 2300);
+        sheet.setColumnWidth(35, 3100);
 
         int rowNumber = 1;
 
