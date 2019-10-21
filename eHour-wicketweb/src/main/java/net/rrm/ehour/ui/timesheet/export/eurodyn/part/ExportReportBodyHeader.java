@@ -20,6 +20,8 @@ import net.rrm.ehour.ui.common.report.Report;
 import net.rrm.ehour.ui.common.report.excel.CellFactory;
 import net.rrm.ehour.ui.common.report.excel.ExcelStyle;
 import net.rrm.ehour.ui.common.report.excel.ExcelWorkbook;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.wicket.model.ResourceModel;
@@ -38,7 +40,12 @@ public class ExportReportBodyHeader extends AbstractExportReportPart
 	}
 
 	private void createCell(Row row, int column, String text){
-		CellFactory.createCell(row, column, text, getWorkbook());
+		if(NumberUtils.isNumber(text)){
+			row.createCell(column).setCellValue(Double.parseDouble(text));
+			row.getCell(column).setCellType(Cell.CELL_TYPE_NUMERIC);
+		}else{
+			CellFactory.createCell(row, column, text, getWorkbook());
+		}
 		row.getCell(column).setCellStyle(getTitleStyle());
 	}
 
