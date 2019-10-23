@@ -142,8 +142,10 @@ public class ExportReportHeader extends AbstractExportReportPart
         this.createCell(row, CONSULTANT_COLUMN, CONSULTANT_COLUMN + 5, "TIMEA3 Model time-sheet");
         row.getCell(CONSULTANT_COLUMN).setCellStyle(cellStyle);
 
-        this.createCell(row, DG_COLUMN, DG_COLUMN + 3, String.valueOf(calendar.get(Calendar.YEAR)));
+        this.createCell(row, DG_COLUMN, DG_COLUMN + 3, "");
+        row.getCell(DG_COLUMN).setCellValue(calendar.get(Calendar.YEAR));
         row.getCell(DG_COLUMN).setCellStyle(cellStyle);
+        row.getCell(DG_COLUMN).setCellType(Cell.CELL_TYPE_NUMERIC);
 
         this.createCell(row, DATE_COLUMN, DATE_COLUMN + 1, "TIME SHEET");
         row.getCell(DATE_COLUMN).setCellStyle(cellStyle);
