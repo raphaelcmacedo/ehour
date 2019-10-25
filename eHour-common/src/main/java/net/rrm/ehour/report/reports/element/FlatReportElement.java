@@ -16,6 +16,7 @@
 
 package net.rrm.ehour.report.reports.element;
 
+import net.rrm.ehour.domain.TimesheetLock;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -42,13 +43,20 @@ public class FlatReportElement implements ProjectStructuredReportElement {
     private Integer projectId;
     private String projectName;
     private String projectCode;
+    private String sectionLeader = "";
+    private String headOfUnit = "";
+    private String contractManager = "";
     private Integer assignmentId;
+    private Double assignmentDaysAllotted = 0.0;
     private String role;
     private Date dayDate;
     private String comment;
     private Integer displayOrder;
     private LockableDate lockableDate;
     private Boolean emptyEntry;
+    private boolean holiday;
+    private String internalAddress;
+    private String telephone;
 
     public FlatReportElement() {
     }
@@ -69,12 +77,16 @@ public class FlatReportElement implements ProjectStructuredReportElement {
         projectName = clone.projectName;
         projectCode = clone.projectCode;
         assignmentId = clone.assignmentId;
+        assignmentDaysAllotted = clone.assignmentDaysAllotted;
         role = clone.role;
         dayDate = clone.dayDate;
         comment = clone.comment;
         displayOrder = clone.displayOrder;
         lockableDate = clone.lockableDate;
         emptyEntry = clone.emptyEntry;
+        sectionLeader = clone.sectionLeader;
+        headOfUnit = clone.headOfUnit;
+        contractManager = clone.contractManager;
     }
 
 
@@ -292,6 +304,14 @@ public class FlatReportElement implements ProjectStructuredReportElement {
         this.assignmentId = assignmentId;
     }
 
+    public Double getAssignmentDaysAllotted() {
+        return assignmentDaysAllotted;
+    }
+
+    public void setAssignmentDaysAllotted(Double assignmentDaysAllotted) {
+        this.assignmentDaysAllotted = assignmentDaysAllotted;
+    }
+
     /**
      * @return the dayDate
      */
@@ -312,6 +332,38 @@ public class FlatReportElement implements ProjectStructuredReportElement {
 
     public void setProjectCode(String projectCode) {
         this.projectCode = projectCode;
+    }
+
+    public String getSectionLeader() {
+        return sectionLeader;
+    }
+
+    public void setSectionLeader(String sectionLeader) {
+        this.sectionLeader = sectionLeader;
+    }
+
+    public String getHeadOfUnit() {
+        return headOfUnit;
+    }
+
+    public void setHeadOfUnit(String headOfUnit) {
+        this.headOfUnit = headOfUnit;
+    }
+
+    public String getContractManager() {
+        return contractManager;
+    }
+
+    public boolean isHoliday() {
+        return holiday;
+    }
+
+    public void setHoliday(boolean holiday) {
+        this.holiday = holiday;
+    }
+
+    public void setContractManager(String contractManager) {
+        this.contractManager = contractManager;
     }
 
     @Override
@@ -390,5 +442,21 @@ public class FlatReportElement implements ProjectStructuredReportElement {
      */
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
+    }
+
+    public String getInternalAddress() {
+        return internalAddress;
+    }
+
+    public void setInternalAddress(String internalAddress) {
+        this.internalAddress = internalAddress;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
 }

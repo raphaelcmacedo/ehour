@@ -6,6 +6,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,10 @@ public class TimesheetLock extends DomainObject<Integer, TimesheetLock> {
     @Column(name = "NAME")
     private String name;
 
+    @Column(name = "HOLIDAY")
+    @Type(type = "yes_no")
+    private boolean holiday;
+
     @ManyToMany(targetEntity = User.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(name = "TIMESHEET_LOCK_EXCLUSION",
             joinColumns = @JoinColumn(name = "LOCK_ID"),
@@ -43,25 +48,26 @@ public class TimesheetLock extends DomainObject<Integer, TimesheetLock> {
     public TimesheetLock() {
     }
 
-    public TimesheetLock(Date dateStart, Date dateEnd) {
+    public TimesheetLock(Date dateStart, Date dateEnd, Boolean holiday) {
         this.dateStart = dateStart;
         this.dateEnd = dateEnd;
+        this.holiday = holiday;
     }
 
-    public TimesheetLock(Date dateStart, Date dateEnd, List<User> excludedUsers) {
-        this(dateStart, dateEnd);
+    public TimesheetLock(Date dateStart, Date dateEnd, Boolean holiday, List<User> excludedUsers) {
+        this(dateStart, dateEnd, holiday);
         this.excludedUsers = excludedUsers;
     }
 
-    public TimesheetLock(Date dateStart, Date dateEnd, String name, List<User> excludedUsers) {
-        this(dateStart, dateEnd, excludedUsers);
+    public TimesheetLock(Date dateStart, Date dateEnd, String name, Boolean holiday, List<User> excludedUsers) {
+        this(dateStart, dateEnd, holiday, excludedUsers);
 
         this.name = name;
     }
 
 
-    public TimesheetLock(Integer lockId, Date dateStart, Date dateEnd, String name, List<User> excludedUsers) {
-        this(dateStart, dateEnd, name, excludedUsers);
+    public TimesheetLock(Integer lockId, Date dateStart, Date dateEnd, String name, Boolean holiday, List<User> excludedUsers) {
+        this(dateStart, dateEnd, name, holiday, excludedUsers);
         this.lockId = lockId;
     }
 
@@ -95,6 +101,15 @@ public class TimesheetLock extends DomainObject<Integer, TimesheetLock> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    public Boolean getHoliday() {
+        return holiday;
+    }
+
+    public void setHoliday(boolean holiday) {
+        this.holiday = holiday;
     }
 
     public List<User> getExcludedUsers() {

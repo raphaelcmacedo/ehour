@@ -59,5 +59,11 @@ public class AssignmentRateRoleFormPartPanel extends Panel {
 
         // and currency
         add(new Label("currency", Currency.getInstance(config.getCurrency()).getSymbol(config.getCurrency())));
+
+        TextField<String> internalAddress = new TextField<>("projectAssignment.internalAddress");
+        add(internalAddress);
+
+        TextField<String> telephone = new TextField<>("projectAssignment.telephone");
+        add(telephone);
     }
 }

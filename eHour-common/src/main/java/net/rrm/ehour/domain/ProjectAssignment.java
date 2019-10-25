@@ -81,6 +81,12 @@ public class ProjectAssignment extends DomainObject<Integer, ProjectAssignment> 
     @Type(type = "yes_no")
     private Boolean active;
 
+    @Column(name = "INTERNAL_ADDRESS", length = 255)
+    private String internalAddress;
+
+    @Column(name = "TELEPHONE", length = 255)
+    private String telephone;
+
     @Transient
     private boolean deletable;
 
@@ -160,6 +166,8 @@ public class ProjectAssignment extends DomainObject<Integer, ProjectAssignment> 
         assignment.setProject(templateAssignment.getProject());
         assignment.setRole(templateAssignment.getRole());
         assignment.setUser(templateAssignment.getUser());
+        assignment.setInternalAddress(templateAssignment.getInternalAddress());
+        assignment.setTelephone(templateAssignment.getTelephone());
         return assignment;
     }
 
@@ -354,6 +362,22 @@ public class ProjectAssignment extends DomainObject<Integer, ProjectAssignment> 
      */
     public void setNotifyPm(boolean notifyPm) {
         this.notifyPm = notifyPm;
+    }
+
+    public String getInternalAddress() {
+        return internalAddress;
+    }
+
+    public void setInternalAddress(String internalAddress) {
+        this.internalAddress = internalAddress;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
 
     @Override

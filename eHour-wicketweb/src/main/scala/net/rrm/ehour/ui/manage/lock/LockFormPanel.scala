@@ -1,5 +1,6 @@
 package net.rrm.ehour.ui.manage.lock
 
+import java.lang
 import java.util.Date
 
 import net.rrm.ehour.domain.{TimesheetLock, User}
@@ -23,7 +24,7 @@ import org.apache.wicket.event.{Broadcast, IEvent}
 import org.apache.wicket.markup.html.WebMarkupContainer
 import org.apache.wicket.markup.html.basic.Label
 import org.apache.wicket.markup.html.border.Border
-import org.apache.wicket.markup.html.form.{Form, TextField}
+import org.apache.wicket.markup.html.form.{CheckBox, Form, TextField}
 import org.apache.wicket.markup.html.list.{ListItem, ListView}
 import org.apache.wicket.markup.html.panel.Fragment
 import org.apache.wicket.model.{IModel, Model, PropertyModel, ResourceModel}
@@ -44,6 +45,7 @@ class LockFormPanel(id: String, model: IModel[LockAdminBackingBean]) extends Abs
     outerBorder.add(form)
 
     form.add(createNameInputField())
+    form.add(createHolidayInputField())
     addDateInputFields(form)
     addUserSelection(form)
     createAffectedUserPanel(LockFormPanel.AffectedId)
@@ -151,6 +153,14 @@ class LockFormPanel(id: String, model: IModel[LockAdminBackingBean]) extends Abs
     nameInputField
   }
 
+  private def createHolidayInputField(): CheckBox = {
+    val holidayInputField = new CheckBox(LockFormPanel.HolidayId);
+    holidayInputField.setMarkupId("lock.holiday")
+    holidayInputField.setModel(new PropertyModel[lang.Boolean](model,"lock.holiday"))
+    holidayInputField.setOutputMarkupId(true)
+    holidayInputField
+  }
+
   // ugly..
   private def addUserSelection(form: Form[_]): Fragment = {
     val users = getPanelModelObject.getLock.getExcludedUsers
@@ -244,6 +254,7 @@ object LockFormPanel {
   val OuterBorderId = "outerBorder"
   val FormId = "lockForm"
   val NameId = "name"
+  val HolidayId = "lock.holiday"
   val ServerMessageId = "serverMessage"
   val AffectedUsersId = "affectedUsersPanel"
   val SubmitId = "submit"

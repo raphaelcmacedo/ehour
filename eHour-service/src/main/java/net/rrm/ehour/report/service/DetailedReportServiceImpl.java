@@ -20,10 +20,13 @@ import com.google.common.collect.Lists;
 import net.rrm.ehour.data.DateRange;
 import net.rrm.ehour.domain.Project;
 import net.rrm.ehour.domain.ProjectAssignment;
+import net.rrm.ehour.domain.TimesheetLock;
 import net.rrm.ehour.domain.User;
+import net.rrm.ehour.persistence.project.dao.ProjectAssignmentDao;
 import net.rrm.ehour.persistence.project.dao.ProjectDao;
 import net.rrm.ehour.persistence.report.dao.DetailedReportDao;
 import net.rrm.ehour.persistence.report.dao.ReportAggregatedDao;
+import net.rrm.ehour.persistence.timesheetlock.dao.TimesheetLockDao;
 import net.rrm.ehour.report.criteria.ReportCriteria;
 import net.rrm.ehour.report.reports.ReportData;
 import net.rrm.ehour.report.reports.element.FlatReportElement;
@@ -31,9 +34,12 @@ import net.rrm.ehour.report.reports.element.FlatReportElementBuilder;
 import net.rrm.ehour.report.reports.element.LockableDate;
 import net.rrm.ehour.timesheet.service.TimesheetLockService;
 import net.rrm.ehour.util.DomainUtil;
+import org.joda.time.Instant;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -42,15 +48,20 @@ import java.util.List;
  */
 @Service("detailedReportService")
 public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatReportElement> implements DetailedReportService {
+    private static final String CONTRACTOR_CUSTOMER_CODE = "Contractor";
     private DetailedReportDao detailedReportDao;
+    private ProjectAssignmentDao projectAssignmentDao;
+    private TimesheetLockDao timesheetLockDao;
 
     DetailedReportServiceImpl() {
     }
 
     @Autowired
-    public DetailedReportServiceImpl(ReportCriteriaService reportCriteriaService, ProjectDao projectDao, TimesheetLockService lockService, DetailedReportDao detailedReportDao, ReportAggregatedDao reportAggregatedDAO) {
+    public DetailedReportServiceImpl(ReportCriteriaService reportCriteriaService, ProjectDao projectDao, TimesheetLockService lockService, DetailedReportDao detailedReportDao, ReportAggregatedDao reportAggregatedDAO, ProjectAssignmentDao projectAssignmentDao, TimesheetLockDao timesheetLockDao) {
         super(reportCriteriaService, projectDao, lockService, reportAggregatedDAO);
         this.detailedReportDao = detailedReportDao;
+        this.projectAssignmentDao = projectAssignmentDao;
+        this.timesheetLockDao = timesheetLockDao;
     }
 
     public ReportData getDetailedReportData(ReportCriteria reportCriteria) {
@@ -73,7 +84,7 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
             element.setLockableDate(new LockableDate(date, lockedDates.contains(date)));
         }
 
-        if (showZeroBookings) {
+        if (showZeroBookings || elements.isEmpty()) {
             List<FlatReportElement> reportElementsForAssignmentsWithoutBookings = getReportElementsForAssignmentsWithoutBookings(reportRange, userIds, projectIds);
 
             reportElementsForAssignmentsWithoutBookings.addAll(elements);
@@ -93,6 +104,7 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
             elements.add(FlatReportElementBuilder.buildFlatReportElement(assignment));
         }
 
+        this.addHolidays(elements, reportRange);
         return elements;
     }
 
@@ -108,6 +120,71 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
         } else {
             elements = detailedReportDao.getHoursPerDayForProjectsAndUsers(projectIds, userIds, reportRange);
         }
+
+        this.addHolidays(elements, reportRange);
+        this.setCustomFields(elements);
         return elements;
     }
+
+    private void setCustomFields(List<FlatReportElement> elements){
+        if(elements != null && !elements.isEmpty()){
+            Integer projectAssignmentId = null;
+            for(FlatReportElement element:elements){
+                if(element.getCustomerCode() != null && !element.getCustomerCode().equals(CONTRACTOR_CUSTOMER_CODE)){
+                    projectAssignmentId = element.getAssignmentId();
+                    break;
+                }
+            }
+
+            ProjectAssignment assignment = projectAssignmentDao.findById(projectAssignmentId);
+            String sectionLeader = "";
+            if(assignment.getProject().getSectionLeader() != null){
+                sectionLeader = assignment.getProject().getSectionLeader().getFullName();
+            }
+
+            String headOfUnit = "";
+            if(assignment.getProject().getHeadOfUnit() != null){
+                headOfUnit = assignment.getProject().getHeadOfUnit().getFullName();
+            }
+
+            String internalAddress = assignment.getInternalAddress();
+            String telephone = assignment.getTelephone();
+            double allottedDays = 0.0;
+            if(assignment.getAllottedHours() > 0){
+                allottedDays = assignment.getAllottedHours() / 8;
+            }
+
+            for(FlatReportElement element:elements){
+                element.setSectionLeader(sectionLeader);
+                element.setHeadOfUnit(headOfUnit);
+                element.setAssignmentDaysAllotted(allottedDays);
+                element.setInternalAddress(internalAddress);
+                element.setTelephone(telephone);
+            }
+
+        }
+    }
+
+    private void addHolidays(List<FlatReportElement> elements, DateRange dateRange){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateRange.getDateStart());
+        List<TimesheetLock> locks = timesheetLockDao.listHolidaysByYear(calendar.get(Calendar.YEAR));
+
+        for(TimesheetLock lock:locks){
+            Date current = lock.getDateStart();
+
+            while (current.before(lock.getDateEnd()) || current.equals(lock.getDateEnd())) {
+                FlatReportElement element = new FlatReportElement();
+                element.setDayDate(current);
+                element.setHoliday(true);
+                elements.add(element);
+
+                calendar.setTime(current);
+                calendar.add(Calendar.DATE, 1);
+                current = calendar.getTime();
+            }
+        }
+    }
+
+
 }

@@ -72,7 +72,9 @@ public class TimesheetExportCriteriaPanel extends AbstractBasePanel<ReportCriter
 
         form.add(createSubmitButton("store", form));
 
-        form.add(new LocalizedDatePicker("startDate", new PropertyModel<Date>(model, "reportRange.dateStart")));
+        LocalizedDatePicker startDate = new LocalizedDatePicker("startDate", new PropertyModel<Date>(model, "reportRange.dateStart"));
+        startDate.setEnabled(false);
+        form.add(startDate);
         form.add(new LocalizedDatePicker("endDate", new PropertyModel<Date>(model, "reportRange.dateEnd")));
 
         return form;
@@ -141,7 +143,7 @@ public class TimesheetExportCriteriaPanel extends AbstractBasePanel<ReportCriter
         @Override
         protected void onSubmit() {
             final ReportCriteria reportCriteria = mergeBillablesAndUnbillables();
-            final TimesheetExcelExport timesheetExcelExport = new TimesheetExcelExport(reportCriteria);
+            final net.rrm.ehour.ui.timesheet.export.eurodyn.TimesheetExcelExport timesheetExcelExport = new net.rrm.ehour.ui.timesheet.export.eurodyn.TimesheetExcelExport(reportCriteria);
 
             String filename = createFilename(reportCriteria);
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository
 
 trait TimesheetLockDao extends GenericDao[Integer, TimesheetLock] {
   def findMatchingLock(start: Date, end: Date): JList[TimesheetLock]
+  def listHolidaysByYear(year: Integer): JList[TimesheetLock]
 }
 
 @Repository("timesheetLockDao")
@@ -17,5 +18,12 @@ class TimesheetLockDaoHibernateImpl extends AbstractGenericDaoHibernateImpl[Inte
     val params = List(start, end)
 
     findByNamedQuery("TimesheetLock.getLocksMatchingDate", keys, params)
+  }
+
+  override def listHolidaysByYear(year: Integer): JList[TimesheetLock] = {
+    val keys = List("year")
+    val params = List(year)
+
+    findByNamedQuery("TimesheetLock.getHolidaysByYear", keys, params)
   }
 }
