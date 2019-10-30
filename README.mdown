@@ -30,7 +30,7 @@ Deploy
 In order to deploy the application, it is necessary to follow the steps:
 
 * Deploy the war file in your application server (Tomcat, Jetty)
-* Upate the database with the latests sql files (contained in the /sql folder in this repository)
+* Update the database with the latest sql files (contained in the /sql folder in this repository)
 * Update the resource files (i18n)
 
 IntelliJ run configuration
