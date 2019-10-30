@@ -9,27 +9,35 @@ For build instructions, check https://wiki.ehour.nl/display/DOCU/Build+from+sour
 Environment
 ---------------------------------------
 
-Java 7
-Java 8 for maven
-Maven 3
-IntelliJ
-MySQL 5.1.35
-Derby database
-Git
+* Java 7
+* Java 8 for maven
+* Maven 3
+* IntelliJ
+* MySQL 5.1.35
+* Derby database
+* Git
 
 Home folder
 ---------------------------------------
 
-The home folder will contain all the application files like configurations, properties, logs and etc.
-There is a copy of the folder in the git repository.
-The folder path should be indicated in the JVM variable EHOUR_HOME
+The home folder will contain all the application files like configurations, properties, logs and etc  
+There is a copy of the folder in the git repository (/home)  
+The folder path should be indicated in the JVM variable EHOUR_HOME (see more at the VM options section)  
 
 Deploy
 ---------------------------------------
 
 In order to deploy the application, it is necessary to follow the steps:
 
-Deploy the war file in your application server (Tomcat, Jetty)
-Upate the database with the latests sql files
-Update the resource files (i18n)
+* Deploy the war file in your application server (Tomcat, Jetty)
+* Upate the database with the latests sql files (contained in the /sql folder in this repository)
+* Update the resource files (i18n)
+
+IntelliJ run configuration
+---------------------------------------
+
+* Main class: net.rrm.ehour.EhourServerRunner
+* VM options: -ea -Xmx1024m -DEHOUR_HOME=<your path to home>
+* User classpath of module: eHour-standalone
+* JRE: 1.8
 
