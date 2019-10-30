@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>net.rrm.ehour</groupId>
-    <version>1.5-ED</version>
+    <version>1.6-ED</version>
     <artifactId>eHour</artifactId>
     <packaging>pom</packaging>
     <name>eHour</name>
@@ -33,7 +33,7 @@
 
 
     <properties>
-        <ehour.version>1.5-ED</ehour.version>
+        <ehour.version>1.6-ED</ehour.version>
     </properties>
 
     <repositories>
