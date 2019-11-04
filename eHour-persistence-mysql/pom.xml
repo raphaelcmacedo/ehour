@@ -9,11 +9,39 @@
 	<packaging>jar</packaging>
 	<name>eHour DB MySQL connectivity</name>
 
+	<properties>
+		<url.db>jdbc:mysql://127.0.0.1:3306/ehour</url.db>
+		<user.db>root</user.db>
+		<password.db>sa</password.db>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>4.0</version>
+		</dependency>
 	</dependencies>
+
+    <build>
+		<plugins>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>4.0</version>
+				<configuration>
+					<url>${url.db}</url>
+					<user>${user.db}</user>
+					<password>${password.db}</password>
+					<baselineOnMigrate>true</baselineOnMigrate>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
 
