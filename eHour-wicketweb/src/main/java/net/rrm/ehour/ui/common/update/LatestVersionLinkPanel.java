@@ -23,7 +23,6 @@ public class LatestVersionLinkPanel extends Panel {
     public LatestVersionLinkPanel(String id) {
         super(id);
 
-        add(addLatestVersionBlock("newVersion"));
     }
 
     private WebMarkupContainer addLatestVersionBlock(String id) {
