@@ -165,7 +165,7 @@ public class TimesheetExportCriteriaPanel extends AbstractBasePanel<ReportCriter
             String start = formatter.format(reportRange.getDateStart());
             String end = formatter.format(reportRange.getDateEnd());
 
-            return String.format("eHour_export_%s-%s.xlsx", start, end);
+            return String.format("sft_export_%s-%s.xlsx", start, end);
         }
     }
 
