@@ -241,7 +241,11 @@ public class ExportReportHeader extends AbstractExportReportPart
             specificContract = specificContract.substring(0, index);
         }
         this.createData(row, CONTRACT_COLUMN, END_DATE_COLUMN-1, specificContract );
-        this.createData(row, END_DATE_COLUMN, NUMBER_OF_DAYS_COLUMN-2, "" );
+        String assignmentEndDate = "";
+        if(data.getAssignmentEndDate() != null){
+            assignmentEndDate = df.format(data.getAssignmentEndDate());
+        }
+        this.createData(row, END_DATE_COLUMN, NUMBER_OF_DAYS_COLUMN-2, assignmentEndDate );
         this.createData(row, NUMBER_OF_DAYS_COLUMN, PROJECT_COLUMN-2, data.getAssignmentDaysAllotted().toString());
         this.createData(row, PROJECT_COLUMN, PROJECT_COLUMN+1, data.getProjectName() );
 

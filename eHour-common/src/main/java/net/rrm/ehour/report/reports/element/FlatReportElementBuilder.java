@@ -20,7 +20,7 @@ public class FlatReportElementBuilder {
             double daysAlloted = assignment.getAllottedHours() / 8;
             element.setAssignmentDaysAllotted(daysAlloted);
         }
-
+        element.setAssignmentEndDate(assignment.getDateEnd());
 
         Project project = assignment.getProject();
         Customer customer = project.getCustomer();

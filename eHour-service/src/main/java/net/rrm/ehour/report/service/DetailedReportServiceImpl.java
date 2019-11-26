@@ -136,30 +136,40 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
                 }
             }
 
-            ProjectAssignment assignment = projectAssignmentDao.findById(projectAssignmentId);
             String sectionLeader = "";
-            if(assignment.getProject().getSectionLeader() != null){
-                sectionLeader = assignment.getProject().getSectionLeader().getFullName();
-            }
-
             String headOfUnit = "";
-            if(assignment.getProject().getHeadOfUnit() != null){
-                headOfUnit = assignment.getProject().getHeadOfUnit().getFullName();
-            }
-
-            String internalAddress = assignment.getInternalAddress();
-            String telephone = assignment.getTelephone();
+            Date assignmentEndDate = null;
+            String internalAddress = "";
+            String telephone = "";
             double allottedDays = 0.0;
-            if(assignment.getAllottedHours() > 0){
-                allottedDays = assignment.getAllottedHours() / 8;
-            }
 
+            if(projectAssignmentId != null) {
+                ProjectAssignment assignment = projectAssignmentDao.findById(projectAssignmentId);
+
+                if (assignment.getProject().getSectionLeader() != null) {
+                    sectionLeader = assignment.getProject().getSectionLeader().getFullName();
+                }
+
+
+                if (assignment.getProject().getHeadOfUnit() != null) {
+                    headOfUnit = assignment.getProject().getHeadOfUnit().getFullName();
+                }
+
+                assignmentEndDate = assignment.getDateEnd();
+                internalAddress = assignment.getInternalAddress();
+                telephone = assignment.getTelephone();
+
+                if (assignment.getAllottedHours() > 0) {
+                    allottedDays = assignment.getAllottedHours() / 8;
+                }
+            }
             for(FlatReportElement element:elements){
                 element.setSectionLeader(sectionLeader);
                 element.setHeadOfUnit(headOfUnit);
                 element.setAssignmentDaysAllotted(allottedDays);
                 element.setInternalAddress(internalAddress);
                 element.setTelephone(telephone);
+                element.setAssignmentEndDate(assignmentEndDate);
             }
 
         }

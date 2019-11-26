@@ -110,7 +110,7 @@ public class ExportReportBody extends AbstractExportReportPart {
             calendar.setTime(element.getDayDate());
 
             String text = "";
-            CellStyle cellStyle = getDataStyle();
+            CellStyle cellStyle = getDataCenterStyle();
             if(this.isWeekend(calendar)){
                 cellStyle = getWeekendStyle();
             }else if(element.isHoliday()){

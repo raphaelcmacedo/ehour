@@ -53,6 +53,7 @@ public abstract class AbstractExportReportPart
 
 	private CellStyle titleStyle;
 	private CellStyle dataStyle;
+	private CellStyle dataCenterStyle;
 	private CellStyle decimalStyle;
 	private CellStyle subtotalStyle;
 	private CellStyle weekendStyle;
@@ -109,6 +110,14 @@ public abstract class AbstractExportReportPart
 		cellFontData.setFontHeightInPoints((short)8);
 		dataStyle.setFont(cellFontData);
 
+		dataCenterStyle = workbook.getWorkbook().createCellStyle();
+		dataCenterStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+		dataCenterStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
+		dataCenterStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+		dataCenterStyle.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
+		dataCenterStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		dataCenterStyle.setFont(cellFontData);
+
 		decimalStyle = workbook.getWorkbook().createCellStyle();
 		decimalStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
 		decimalStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
@@ -137,7 +146,7 @@ public abstract class AbstractExportReportPart
 		weekendStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
 		weekendStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
 		weekendStyle.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
-		weekendStyle.setFillForegroundColor(IndexedColors.LIGHT_YELLOW.index);
+		weekendStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.index);
 		weekendStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
 		holidayStyle = workbook.getWorkbook().createCellStyle();
@@ -146,7 +155,7 @@ public abstract class AbstractExportReportPart
 		holidayStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);
 		holidayStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
 		holidayStyle.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
-		holidayStyle.setFillForegroundColor(IndexedColors.ROSE.index);
+		holidayStyle.setFillForegroundColor(IndexedColors.RED.index);
 		holidayStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
 		blackBoxStyle = workbook.getWorkbook().createCellStyle();
@@ -188,7 +197,7 @@ public abstract class AbstractExportReportPart
 	}
 
 	protected boolean isContractorElement(FlatReportElement element){
-	    return element.getCustomerCode().equals(CONTRACTOR_CUSTOMER);
+	    return element.getCustomerCode() != null && element.getCustomerCode().equals(CONTRACTOR_CUSTOMER);
     }
 
 	protected int getCellMargin()
@@ -228,6 +237,11 @@ public abstract class AbstractExportReportPart
 	protected CellStyle getDataStyle() {
 		return dataStyle;
 	}
+
+	protected CellStyle getDataCenterStyle() {
+		return dataCenterStyle;
+	}
+
 
 	protected CellStyle getDecimalStyle() {
 		return decimalStyle;

@@ -48,6 +48,7 @@ public class FlatReportElement implements ProjectStructuredReportElement {
     private String contractManager = "";
     private Integer assignmentId;
     private Double assignmentDaysAllotted = 0.0;
+    private Date assignmentEndDate;
     private String role;
     private Date dayDate;
     private String comment;
@@ -78,6 +79,7 @@ public class FlatReportElement implements ProjectStructuredReportElement {
         projectCode = clone.projectCode;
         assignmentId = clone.assignmentId;
         assignmentDaysAllotted = clone.assignmentDaysAllotted;
+        assignmentEndDate = clone.assignmentEndDate;
         role = clone.role;
         dayDate = clone.dayDate;
         comment = clone.comment;
@@ -364,6 +366,14 @@ public class FlatReportElement implements ProjectStructuredReportElement {
 
     public void setContractManager(String contractManager) {
         this.contractManager = contractManager;
+    }
+
+    public Date getAssignmentEndDate() {
+        return assignmentEndDate;
+    }
+
+    public void setAssignmentEndDate(Date assignmentEndDate) {
+        this.assignmentEndDate = assignmentEndDate;
     }
 
     @Override
