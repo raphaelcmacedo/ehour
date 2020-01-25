@@ -66,6 +66,14 @@
         ORDER BY entry.updateDate DESC
     </query>
 
+    <query name="Timesheet.sumPastEntriesForAssignmentId">
+        <![CDATA[
+        FROM TimesheetEntry entry
+        WHERE entry.entryId.projectAssignment.assignmentId = :assignmentId
+        AND entry.entryId.entryDate < :startDate
+         ]]>
+    </query>
+
     <query name="Timesheet.deleteOnAssignmentIds">
         <![CDATA[
     	DELETE

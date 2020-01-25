@@ -18,14 +18,12 @@ package net.rrm.ehour.report.service;
 
 import com.google.common.collect.Lists;
 import net.rrm.ehour.data.DateRange;
-import net.rrm.ehour.domain.Project;
-import net.rrm.ehour.domain.ProjectAssignment;
-import net.rrm.ehour.domain.TimesheetLock;
-import net.rrm.ehour.domain.User;
+import net.rrm.ehour.domain.*;
 import net.rrm.ehour.persistence.project.dao.ProjectAssignmentDao;
 import net.rrm.ehour.persistence.project.dao.ProjectDao;
 import net.rrm.ehour.persistence.report.dao.DetailedReportDao;
 import net.rrm.ehour.persistence.report.dao.ReportAggregatedDao;
+import net.rrm.ehour.persistence.timesheet.dao.TimesheetDao;
 import net.rrm.ehour.persistence.timesheetlock.dao.TimesheetLockDao;
 import net.rrm.ehour.report.criteria.ReportCriteria;
 import net.rrm.ehour.report.reports.ReportData;
@@ -52,16 +50,18 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
     private DetailedReportDao detailedReportDao;
     private ProjectAssignmentDao projectAssignmentDao;
     private TimesheetLockDao timesheetLockDao;
+    private TimesheetDao timesheetDao;
 
     DetailedReportServiceImpl() {
     }
 
     @Autowired
-    public DetailedReportServiceImpl(ReportCriteriaService reportCriteriaService, ProjectDao projectDao, TimesheetLockService lockService, DetailedReportDao detailedReportDao, ReportAggregatedDao reportAggregatedDAO, ProjectAssignmentDao projectAssignmentDao, TimesheetLockDao timesheetLockDao) {
+    public DetailedReportServiceImpl(ReportCriteriaService reportCriteriaService, ProjectDao projectDao, TimesheetLockService lockService, DetailedReportDao detailedReportDao, ReportAggregatedDao reportAggregatedDAO, ProjectAssignmentDao projectAssignmentDao, TimesheetLockDao timesheetLockDao, TimesheetDao timesheetDao) {
         super(reportCriteriaService, projectDao, lockService, reportAggregatedDAO);
         this.detailedReportDao = detailedReportDao;
         this.projectAssignmentDao = projectAssignmentDao;
         this.timesheetLockDao = timesheetLockDao;
+        this.timesheetDao = timesheetDao;
     }
 
     public ReportData getDetailedReportData(ReportCriteria reportCriteria) {
@@ -122,11 +122,11 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
         }
 
         this.addHolidays(elements, reportRange);
-        this.setCustomFields(elements);
+        this.setCustomFields(elements, reportRange);
         return elements;
     }
 
-    private void setCustomFields(List<FlatReportElement> elements){
+    private void setCustomFields(List<FlatReportElement> elements, DateRange dateRange){
         if(elements != null && !elements.isEmpty()){
             Integer projectAssignmentId = null;
             for(FlatReportElement element:elements){
@@ -142,6 +142,7 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
             String internalAddress = "";
             String telephone = "";
             double allottedDays = 0.0;
+            double acumulatedAllottedDays = 0.0;
 
             if(projectAssignmentId != null) {
                 ProjectAssignment assignment = projectAssignmentDao.findById(projectAssignmentId);
@@ -161,12 +162,17 @@ public class DetailedReportServiceImpl extends AbstractReportServiceImpl<FlatRep
 
                 if (assignment.getAllottedHours() > 0) {
                     allottedDays = assignment.getAllottedHours() / 8;
+
+                    double pastEntryHours = timesheetDao.sumPastEntriesForAssignmentId(assignment.getAssignmentId(), dateRange.getDateStart());
+                    double acumulatedHours = assignment.getAllottedHours() - pastEntryHours;
+                    acumulatedAllottedDays = acumulatedHours / 8;
                 }
             }
             for(FlatReportElement element:elements){
                 element.setSectionLeader(sectionLeader);
                 element.setHeadOfUnit(headOfUnit);
                 element.setAssignmentDaysAllotted(allottedDays);
+                element.setAcumulatedAssignmentDaysAllotted(acumulatedAllottedDays);
                 element.setInternalAddress(internalAddress);
                 element.setTelephone(telephone);
                 element.setAssignmentEndDate(assignmentEndDate);

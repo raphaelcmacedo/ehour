@@ -19,6 +19,7 @@ public class FlatReportElementBuilder {
         if(assignment.getAllottedHours() != null && assignment.getAllottedHours() > 0){
             double daysAlloted = assignment.getAllottedHours() / 8;
             element.setAssignmentDaysAllotted(daysAlloted);
+            element.setAcumulatedAssignmentDaysAllotted(daysAlloted);
         }
         element.setAssignmentEndDate(assignment.getDateEnd());
 

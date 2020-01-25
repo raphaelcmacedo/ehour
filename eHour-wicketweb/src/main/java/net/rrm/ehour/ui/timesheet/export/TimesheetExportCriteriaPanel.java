@@ -73,7 +73,6 @@ public class TimesheetExportCriteriaPanel extends AbstractBasePanel<ReportCriter
         form.add(createSubmitButton("store", form));
 
         LocalizedDatePicker startDate = new LocalizedDatePicker("startDate", new PropertyModel<Date>(model, "reportRange.dateStart"));
-        startDate.setEnabled(false);
         form.add(startDate);
         form.add(new LocalizedDatePicker("endDate", new PropertyModel<Date>(model, "reportRange.dateEnd")));
 

@@ -45,6 +45,8 @@ trait TimesheetDao extends GenericDao[TimesheetEntryId, TimesheetEntry] {
    */
   def getLatestTimesheetEntryForAssignment(assignmentId: Integer): TimesheetEntry
 
+  def sumPastEntriesForAssignmentId(assignmentId: Integer, startDate:Date): Double
+
   /**
    * Delete timesheet entries for assignment
    */

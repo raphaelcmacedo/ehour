@@ -9,6 +9,8 @@ import net.rrm.ehour.persistence.dao.AbstractGenericDaoHibernateImpl
 import net.rrm.ehour.persistence.retry.ExponentialBackoffRetryPolicy
 import net.rrm.ehour.timesheet.dto.BookedDay
 import org.springframework.stereotype.Repository
+import scala.collection.JavaConverters._
+
 
 @Repository("timesheetDAO")
 class TimesheetDaoHibernateImpl extends AbstractGenericDaoHibernateImpl[TimesheetEntryId, TimesheetEntry](classOf[TimesheetEntry]) with TimesheetDao {
@@ -39,6 +41,17 @@ class TimesheetDaoHibernateImpl extends AbstractGenericDaoHibernateImpl[Timeshee
   override def getLatestTimesheetEntryForAssignment(assignmentId: Integer): TimesheetEntry = {
     val results = findByNamedQuery("Timesheet.getLatestEntryForAssignmentId", "assignmentId", assignmentId)
     if (results.size > 0) results.get(0) else null
+  }
+
+  override def sumPastEntriesForAssignmentId(assignmentId: Integer, startDate:Date): Double = {
+    val keys = List("assignmentId", "startDate")
+    val params = List(assignmentId, startDate)
+
+    val results = findByNamedQuery("Timesheet.sumPastEntriesForAssignmentId", keys, params)
+    var sum = 0.0
+    for (result:TimesheetEntry <- results.asScala) sum += result.getHours
+
+    sum
   }
 
   override def deleteTimesheetEntries(assignmentIds: util.List[Integer]): Int = {

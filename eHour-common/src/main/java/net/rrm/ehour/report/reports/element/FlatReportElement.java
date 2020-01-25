@@ -48,6 +48,7 @@ public class FlatReportElement implements ProjectStructuredReportElement {
     private String contractManager = "";
     private Integer assignmentId;
     private Double assignmentDaysAllotted = 0.0;
+    private Double acumulatedAssignmentDaysAllotted = 0.0;
     private Date assignmentEndDate;
     private String role;
     private Date dayDate;
@@ -468,5 +469,13 @@ public class FlatReportElement implements ProjectStructuredReportElement {
 
     public void setTelephone(String telephone) {
         this.telephone = telephone;
+    }
+
+    public Double getAcumulatedAssignmentDaysAllotted() {
+        return acumulatedAssignmentDaysAllotted;
+    }
+
+    public void setAcumulatedAssignmentDaysAllotted(Double acumulatedAssignmentDaysAllotted) {
+        this.acumulatedAssignmentDaysAllotted = acumulatedAssignmentDaysAllotted;
     }
 }

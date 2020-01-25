@@ -99,7 +99,7 @@ public class ExportReportBody extends AbstractExportReportPart {
     private void setDataToReport(List<FlatReportElement> elements){
         for (FlatReportElement element : elements){
             if(daysRemaining == null && !isContractorElement(element)){
-                daysRemaining = element.getAssignmentDaysAllotted();
+                daysRemaining = element.getAcumulatedAssignmentDaysAllotted();
             }
 
             if(element.isEmptyEntry()){
