@@ -235,7 +235,7 @@ public class UserSelectedCriteria implements Serializable {
 
     public UserSelectedCriteria setReportRange(DateRange reportRange) {
         this.reportRange = reportRange;
-        this.setStartDateAsFirstDay();
+        //this.setStartDateAsFirstDay();
 
         return this;
     }
